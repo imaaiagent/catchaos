@@ -41,23 +41,23 @@ function catChaos(opts) {
   var CSS =
     ":host{all:initial}" +
     "*{box-sizing:border-box}" +
-    ".hud{position:fixed;top:12px;right:12px;width:268px;background:#231c30;color:#fff4ea;font:600 13px/1.4 " + FONT + ";border-radius:16px;padding:12px 14px 12px;box-shadow:0 10px 30px rgba(0,0,0,.35);pointer-events:auto;border:2px solid #ff7a1a;user-select:none;-webkit-user-select:none}" +
+    ".hud{position:fixed;top:12px;right:12px;width:268px;background:#0d0d0d;color:#f6f1ea;font:600 13px/1.4 " + FONT + ";border-radius:16px;padding:12px 14px 12px;box-shadow:0 10px 30px rgba(0,0,0,.35);pointer-events:auto;border:2px solid #ff7a1a;user-select:none;-webkit-user-select:none}" +
     ".row{display:flex;align-items:center;gap:6px}" +
     ".title{flex:1;font-weight:800;font-size:14px;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}" +
-    ".btn{all:unset;cursor:pointer;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:#3a2f4d;color:#fff4ea;font:700 13px/1 " + FONT + "}" +
-    ".btn:hover{background:#ff7a1a;color:#231c30}" +
+    ".btn{all:unset;cursor:pointer;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:#262626;color:#f6f1ea;font:700 13px/1 " + FONT + "}" +
+    ".btn:hover{background:#ff7a1a;color:#0d0d0d}" +
     ".btn:focus-visible{outline:2px solid #ffd3a1;outline-offset:2px}" +
     ".score{font-size:30px;font-weight:900;color:#ff9a45;margin-top:6px;line-height:1.1}" +
     ".rank{font-size:12px;color:#ffd3a1;margin-bottom:6px}" +
-    ".stats{display:flex;gap:12px;font-size:12px;color:#d9cfe6}" +
-    ".stats b{color:#fff4ea}" +
-    ".mode{margin-top:6px;font-size:12px;color:#d9cfe6}" +
-    ".help{margin-top:8px;border-top:1px solid #3a2f4d;padding-top:8px;font-size:12px;font-weight:500;color:#e8def3;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:start}" +
-    ".help kbd{font:700 11px/1.5 " + FONT + ";background:#3a2f4d;border-radius:5px;padding:0 5px;color:#fff4ea;white-space:nowrap;justify-self:start;align-self:start}" +
-    ".toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#231c30;color:#fff4ea;border:2px solid #ff7a1a;border-radius:999px;padding:8px 16px;font:700 13px/1.3 " + FONT + ";opacity:0;transition:opacity .25s;pointer-events:none;max-width:90vw;text-align:center}" +
+    ".stats{display:flex;gap:12px;font-size:12px;color:#b8b2aa}" +
+    ".stats b{color:#f6f1ea}" +
+    ".mode{margin-top:6px;font-size:12px;color:#b8b2aa}" +
+    ".help{margin-top:8px;border-top:1px solid #262626;padding-top:8px;font-size:12px;font-weight:500;color:#d6d0c8;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:start}" +
+    ".help kbd{font:700 11px/1.5 " + FONT + ";background:#262626;border-radius:5px;padding:0 5px;color:#f6f1ea;white-space:nowrap;justify-self:start;align-self:start}" +
+    ".toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0d0d0d;color:#f6f1ea;border:2px solid #ff7a1a;border-radius:999px;padding:8px 16px;font:700 13px/1.3 " + FONT + ";opacity:0;transition:opacity .25s;pointer-events:none;max-width:90vw;text-align:center}" +
     ".pad{position:fixed;bottom:16px;display:flex;gap:10px;pointer-events:auto}" +
-    ".pad button{all:unset;width:58px;height:58px;border-radius:50%;background:rgba(35,28,48,.82);border:2px solid #ff7a1a;color:#fff4ea;font:800 12px/1 " + FONT + ";display:grid;place-items:center;touch-action:none;-webkit-user-select:none;user-select:none}" +
-    ".pad button.on{background:#ff7a1a;color:#231c30}" +
+    ".pad button{all:unset;width:58px;height:58px;border-radius:50%;background:rgba(35,28,48,.82);border:2px solid #ff7a1a;color:#f6f1ea;font:800 12px/1 " + FONT + ";display:grid;place-items:center;touch-action:none;-webkit-user-select:none;user-select:none}" +
+    ".pad button.on{background:#ff7a1a;color:#0d0d0d}" +
     "canvas{position:fixed;left:0;top:0;pointer-events:none}" +
     ".marks{position:absolute;left:0;top:0;width:0;height:0;overflow:visible;pointer-events:none}" +
     ".mark{position:absolute;pointer-events:none;transition:opacity .4s}";
@@ -333,7 +333,8 @@ function catChaos(opts) {
     var pts = M.round(clamp(M.sqrt(p.area) * 1.5, 10, 400) * M.min(combo, 10) * (how === "shred" ? 1.5 : how === "hairball" ? 1.3 : 1));
     score += pts; knocked++;
     if (hudOn) floatText(cx, p.t - 6, "+" + pts, "#ff7a1a", combo > 3 ? 20 : 16);
-    if (M.random() < 0.35 || combo === 5 || combo === 10) floatText(cx, p.t - 28, combo >= 5 ? "COMBO x" + combo + "!" : pick(EXCL), "#231c30", 15);
+    if (hudOn) { if (M.random() < 0.35 || combo === 5 || combo === 10) floatText(cx, p.t - 28, combo >= 5 ? "COMBO x" + combo + "!" : pick(EXCL), "#0d0d0d", 15); }
+    else if (M.random() < 0.2) floatText(cx, p.t - 18, pick(EXCL), "#ff7a1a", 15);
     burst(cx, cy, 10, "shard");
     sfx("hit");
     scheduleScan();
@@ -793,7 +794,7 @@ function catChaos(opts) {
       var br = M.sin(t * 0.003) * 0.6;
       head(14, -12 + br, "closed");
       ctx.restore();
-      ctx.fillStyle = "#231c30"; ctx.font = "800 " + (12 + (t / 300 % 3) * 2) + "px " + FONT;
+      ctx.fillStyle = "#0d0d0d"; ctx.font = "800 " + (12 + (t / 300 % 3) * 2) + "px " + FONT;
       ctx.fillText("z", sx + 22, sy - 34 - (t / 30 % 20));
       ctx.font = "800 10px " + FONT; ctx.fillText("z", sx + 30, sy - 48 - (t / 40 % 14));
       return;
@@ -864,13 +865,13 @@ function catChaos(opts) {
       var tw = ctx.measureText(cat.bubble).width, bw = tw + 18, bh = 26;
       var bx = clamp(sx - bw / 2, 6, W.innerWidth - bw - 6), byy = sy - 62 * S - bh;
       ctx.globalAlpha = M.min(1, cat.bubbleT / 12);
-      ctx.fillStyle = "#fff"; ctx.strokeStyle = "#231c30"; ctx.lineWidth = 2;
+      ctx.fillStyle = "#fff"; ctx.strokeStyle = "#0d0d0d"; ctx.lineWidth = 2;
       ctx.beginPath();
       if (ctx.roundRect) ctx.roundRect(bx, byy, bw, bh, 10); else ctx.rect(bx, byy, bw, bh);
       ctx.fill(); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(sx - 5, byy + bh - 1); ctx.lineTo(sx, byy + bh + 7); ctx.lineTo(sx + 5, byy + bh - 1); ctx.closePath(); ctx.fill();
       ctx.beginPath(); ctx.moveTo(sx - 5, byy + bh); ctx.lineTo(sx, byy + bh + 7); ctx.lineTo(sx + 5, byy + bh); ctx.stroke();
-      ctx.fillStyle = "#231c30"; ctx.textBaseline = "middle"; ctx.fillText(cat.bubble, bx + 9, byy + bh / 2 + 1); ctx.textBaseline = "alphabetic";
+      ctx.fillStyle = "#0d0d0d"; ctx.textBaseline = "middle"; ctx.fillText(cat.bubble, bx + 9, byy + bh / 2 + 1); ctx.textBaseline = "alphabetic";
       ctx.globalAlpha = 1;
     }
   }

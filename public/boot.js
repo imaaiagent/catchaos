@@ -32,9 +32,9 @@
       var a = document.createElement("a");
       a.textContent = text; a.href = href;
       if (newTab) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
-      a.style.cssText = "all:unset;cursor:pointer;background:#231c30;color:#fff4ea;border:2px solid #ff7a1a;border-radius:999px;padding:8px 13px;box-shadow:0 4px 14px rgba(0,0,0,.25);";
-      a.addEventListener("mouseenter", function () { a.style.background = "#ff7a1a"; a.style.color = "#231c30"; });
-      a.addEventListener("mouseleave", function () { a.style.background = "#231c30"; a.style.color = "#fff4ea"; });
+      a.style.cssText = "all:unset;cursor:pointer;background:#0d0d0d;color:#f6f1ea;border:2px solid #ff7a1a;border-radius:999px;padding:8px 13px;box-shadow:0 4px 14px rgba(0,0,0,.25);";
+      a.addEventListener("mouseenter", function () { a.style.background = "#ff7a1a"; a.style.color = "#0d0d0d"; });
+      a.addEventListener("mouseleave", function () { a.style.background = "#0d0d0d"; a.style.color = "#f6f1ea"; });
       a.addEventListener("click", function (e) { e.stopPropagation(); if (!newTab) { e.preventDefault(); location.href = href; } });
       wrap.appendChild(a);
       return a;

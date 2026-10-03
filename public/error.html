@@ -4,20 +4,28 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The cat couldn't get in</title>
+<meta name="theme-color" content="#000000">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐈</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/shared.css">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@900&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-body{background:var(--cobalt);color:var(--cream);min-height:100vh;display:flex;flex-direction:column}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--orange:#ff7a1a;--orange-2:#ffa24d;--orange-deep:#b84f06;--text:#f6f1ea;--muted:#a39d95;--line:#2b2b2b;--card:#161616}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;background:radial-gradient(800px 420px at 80% 10%,rgba(255,122,26,.15),transparent 65%),#000;color:var(--text);font:400 17px/1.6 "Plus Jakarta Sans","Segoe UI",system-ui,sans-serif}
+.wrap{width:100%;max-width:1000px;margin:0 auto;padding:0 28px}
 main{flex:1;display:flex;align-items:center;padding:72px 0}
-h1{font:800 clamp(44px,8vw,96px)/.9 var(--display);font-synthesis:none;margin:0 0 22px;letter-spacing:-.01em}
-p{font-size:20px;max-width:50ch;color:var(--soft);margin:0 0 32px}
-form{display:flex;gap:8px;max-width:720px;background:var(--cream);padding:8px;border-radius:999px;box-shadow:0 8px 0 var(--cobalt-deep)}
-input{all:unset;flex:1;min-width:0;font:600 18px/1.2 var(--body);color:var(--navy);padding:14px 18px}
-.back{display:inline-block;margin-top:26px;font-weight:600;color:var(--cream)}
-@media (max-width:640px){form{flex-direction:column;border-radius:26px}}
+h1{font:900 clamp(36px,6.5vw,78px)/1 Unbounded,"Arial Black",system-ui,sans-serif;letter-spacing:-.035em;margin:0 0 20px}
+p{font-size:19px;max-width:52ch;color:var(--muted);margin:0 0 30px}
+form{display:flex;gap:6px;max-width:720px;background:var(--card);border:1.5px solid var(--line);padding:7px;border-radius:999px}
+form:focus-within{border-color:var(--orange)}
+input{all:unset;flex:1;min-width:0;font:600 18px/1.2 inherit;color:var(--text);padding:14px 18px}
+.go{all:unset;cursor:pointer;background:var(--orange);color:#000;font:800 17px/1 "Plus Jakarta Sans",system-ui,sans-serif;padding:17px 24px;border-radius:999px;box-shadow:0 4px 0 var(--orange-deep);white-space:nowrap;text-align:center}
+.go:hover{background:var(--orange-2)}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+.back{display:inline-block;margin-top:24px;font-weight:700;color:var(--orange-2)}
+.edge{height:8px;background:var(--orange)}
+@media (max-width:620px){form{flex-direction:column;border-radius:24px}}
 </style>
 </head>
 <body>
@@ -30,6 +38,6 @@ input{all:unset;flex:1;min-width:0;font:600 18px/1.2 var(--body);color:var(--nav
   </form>
   <a class="back" href="/">Back to the start</a>
 </div></main>
-<div class="table-edge" aria-hidden="true"></div>
+<div class="edge" aria-hidden="true"></div>
 </body>
 </html>
