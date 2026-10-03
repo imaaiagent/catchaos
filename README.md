@@ -4,7 +4,7 @@
 
 Type any website address and an orange cat walks onto the page, climbs the text and images, and knocks every single thing off. The real site stays untouched.
 
-### 👉 [Play it now: catchaos-production.up.railway.app](https://catchaos-production.up.railway.app/#moves)
+### 👉 [Play it now: (https://catchaos.online/)
 
 Made by [@delymakesthings](https://x.com/delymakesthings). If the cat made you laugh, a ⭐ on this repo helps a lot.
 
@@ -12,11 +12,11 @@ Made by [@delymakesthings](https://x.com/delymakesthings). If the cat made you l
 
 ## Try it
 
-1. Open **[catchaos-production.up.railway.app](https://catchaos-production.up.railway.app/#moves)**.
+1. Open **[https://catchaos.online/)**.
 2. Type any address, for example `en.wikipedia.org/wiki/Cat`, and hit **Let the cat in**.
 3. Wreck the page with the keyboard.
 
-No time to type? Try the [porcelain shop demo](https://catchaos-production.up.railway.app/demo), or just move your mouse around the landing page. The cat chases your cursor.
+No time to type? Try the [porcelain shop demo][(https://catchaos.online/demo)), or just move your mouse around the landing page. The cat chases your cursor.
 
 ## Nine ways to ruin a page
 
