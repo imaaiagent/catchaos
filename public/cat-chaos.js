@@ -1,7 +1,10 @@
-function catChaos() {
+function catChaos(opts) {
   "use strict";
+  opts = opts || {};
   if (window.__catChaos) { window.__catChaos.quit(); return; }
   var W = window, D = document, M = Math;
+  var hudOn = opts.hud !== false, keysOn = opts.keys !== false, cameraOn = opts.camera !== false;
+  var scopeEl = opts.scope || null;
 
   /* ---------- helpers ---------- */
   function h(tag, css, text) {
@@ -15,6 +18,14 @@ function catChaos() {
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
   function now() { return performance.now(); }
   function docH() { return M.max(D.documentElement.scrollHeight, D.body ? D.body.scrollHeight : 0, W.innerHeight); }
+  function scopeRect() {
+    if (scopeEl && scopeEl.isConnected) return scopeEl.getBoundingClientRect();
+    return { left: 0, top: 0, right: W.innerWidth, bottom: docH() - W.scrollY, width: W.innerWidth };
+  }
+  function groundY() {
+    if (scopeEl && scopeEl.isConnected) return scopeEl.getBoundingClientRect().bottom + W.scrollY - 2;
+    return docH() - 2;
+  }
   function scrollToY(y) {
     try { W.scrollTo({ top: y, left: W.scrollX, behavior: "instant" }); }
     catch (e) { W.scrollTo(W.scrollX, y); }
@@ -82,7 +93,7 @@ function catChaos() {
   var muted = false;
   var bMute = mkBtn("\u266A", "Mute sounds", function () { muted = !muted; bMute.textContent = muted ? "\u00D7\u266A" : "\u266A"; bMute.title = muted ? "Unmute sounds" : "Mute sounds"; });
   var bHelp = mkBtn("?", "Show controls", function () { toggleHelp(); });
-  mkBtn("\u21BA", "Restore the page", function () { restore(); });
+  mkBtn("\u21BA", "Restore the page", function () { restore(false); });
   mkBtn("\u2715", "Send the cat home", function () { quit(); });
 
   var scoreEl = h("div", null, "0"); scoreEl.className = "score"; hud.appendChild(scoreEl);
@@ -106,13 +117,15 @@ function catChaos() {
 
   var toast = h("div"); toast.className = "toast"; root.appendChild(toast);
   var toastT = 0;
-  function say(msg) { toast.textContent = msg; toast.style.opacity = "1"; clearTimeout(toastT); toastT = setTimeout(function () { toast.style.opacity = "0"; }, 2200); }
+  if (!hudOn) { hud.style.display = "none"; toast.style.display = "none"; }
+  function say(msg) {
+    if (!hudOn) return; toast.textContent = msg; toast.style.opacity = "1"; clearTimeout(toastT); toastT = setTimeout(function () { toast.style.opacity = "0"; }, 2200); }
 
   /* ---------- touch pad ---------- */
   var keys = {}, pressed = {};
   var isTouch = ("ontouchstart" in W) || (navigator.maxTouchPoints > 0 && W.matchMedia && W.matchMedia("(pointer: coarse)").matches);
-  if (isTouch) {
-    toggleHelp();
+  if (isTouch && hudOn) toggleHelp();
+  if (isTouch && hudOn && keysOn) {
     var padL = h("div"); padL.className = "pad"; padL.style.left = "14px"; root.appendChild(padL);
     var padR = h("div"); padR.className = "pad"; padR.style.right = "14px"; root.appendChild(padR);
     var mkPad = function (parent, label, k) {
@@ -213,7 +226,7 @@ function catChaos() {
     list.forEach(function (p) { old.set(p.el, p); });
     var out = [];
     if (!D.body) { list = out; return; }
-    var all = D.body.getElementsByTagName("*");
+    var all = (scopeEl && scopeEl.isConnected ? scopeEl : D.body).getElementsByTagName("*");
     var vpA = W.innerWidth * W.innerHeight, sx = W.scrollX, sy = W.scrollY;
     for (var i = 0; i < all.length && out.length < 2500; i++) {
       var el = all[i];
@@ -225,7 +238,8 @@ function catChaos() {
       if (r.width < 14 || r.height < 8) continue;
       var area = r.width * r.height;
       if (area > vpA * 0.6) continue;
-      var ok = MEDIA[tag] || hasText(el), cs = null;
+      var isLedge = el.hasAttribute("data-cat-ledge");
+      var ok = isLedge || MEDIA[tag] || hasText(el), cs = null;
       if (!ok) {
         if (area > vpA * 0.3) continue;
         cs = getComputedStyle(el);
@@ -236,6 +250,7 @@ function catChaos() {
       if (cs.visibility === "hidden" || cs.opacity === "0" || cs.display === "contents") continue;
       var p = old.get(el) || { el: el, dmg: 0 };
       p.l = r.left + sx; p.r = r.right + sx; p.t = r.top + sy; p.b = r.bottom + sy; p.area = area; p.gone = false;
+      p.ledge = isLedge || !!el.closest("[data-cat-safe]");
       out.push(p);
     }
     list = out;
@@ -252,16 +267,16 @@ function catChaos() {
   }
 
   /* ---------- state ---------- */
-  var S = 1.15; /* cat scale */
+  var S = opts.scale || 1.15; /* cat scale */
   var cat = {
-    x: W.scrollX + W.innerWidth * 0.5, y: W.scrollY + 40, vx: 0, vy: 0, face: 1, grounded: false, on: null, jumps: 0,
+    x: W.scrollX + (scopeRect().left + scopeRect().right) * 0.5, y: W.scrollY + M.max(scopeRect().top, 0) + 30, vx: 0, vy: 0, face: 1, grounded: false, on: null, jumps: 0,
     swatT: 0, swatDown: false, scratchT: 0, scratchAnim: 0, coughT: 0, anim: 0, idle: 0, sleep: false, blink: 0,
     dropT: 0, dropFrom: null, bubble: "Mrrp?", bubbleT: 120, land: 0
   };
   var score = 0, knocked = 0, combo = 1, lastKnock = 0, bestCombo = 1;
   var flyers = [], parts = [], balls = [], saved = [];
-  var laser = false, mouse = { x: -100, y: -100, moved: 0 }, aiSwat = 0, aiTarget = null, aiPickT = 0;
-  var freeCam = 0;
+  var laser = !!opts.auto, mouse = { x: -100, y: -100, moved: 0 }, aiSwat = 0, aiTarget = null, aiPickT = 0;
+  var freeCam = 0, lastRestoreKnocked = 0;
   var RANKS = [[0, "Suspiciously calm"], [3, "Testing the edge of the table"], [10, "Mildly inconvenient"], [25, "Knocking things off tables"],
     [50, "Professional menace"], [90, "Absolute unit of chaos"], [150, "One brain cell, full power"], [250, "The website belongs to the cat now"]];
   var EXCL = ["SMACK!", "BONK!", "*knocks it off*", "Oops.", "YEET", "Gone.", "Not sorry.", "Mine."];
@@ -292,7 +307,7 @@ function catChaos() {
     marksByEl.delete(el);
   }
   function knock(p, dir, force, how) {
-    if (p.gone) return;
+    if (p.gone || p.ledge) return;
     var el = p.el;
     p.gone = true;
     for (var i = 0; i < list.length; i++) { var q = list[i]; if (!q.gone && q !== p && el.contains(q.el)) { q.gone = true; removeMarks(q.el); } }
@@ -317,7 +332,7 @@ function catChaos() {
     lastKnock = t; bestCombo = M.max(bestCombo, combo);
     var pts = M.round(clamp(M.sqrt(p.area) * 1.5, 10, 400) * M.min(combo, 10) * (how === "shred" ? 1.5 : how === "hairball" ? 1.3 : 1));
     score += pts; knocked++;
-    floatText(cx, p.t - 6, "+" + pts, "#ff7a1a", combo > 3 ? 20 : 16);
+    if (hudOn) floatText(cx, p.t - 6, "+" + pts, "#ff7a1a", combo > 3 ? 20 : 16);
     if (M.random() < 0.35 || combo === 5 || combo === 10) floatText(cx, p.t - 28, combo >= 5 ? "COMBO x" + combo + "!" : pick(EXCL), "#231c30", 15);
     burst(cx, cy, 10, "shard");
     sfx("hit");
@@ -326,7 +341,7 @@ function catChaos() {
   function overlap(p, b) { return p.l < b.r && p.r > b.l && p.t < b.b && p.b > b.t; }
   function hitsIn(box, maxN, skipEl) {
     var hits = [];
-    for (var i = 0; i < list.length; i++) { var p = list[i]; if (!p.gone && p !== skipEl && overlap(p, box)) hits.push(p); }
+    for (var i = 0; i < list.length; i++) { var p = list[i]; if (!p.gone && !p.ledge && p !== skipEl && overlap(p, box)) hits.push(p); }
     hits.sort(function (a, b) { return a.area - b.area; });
     var chosen = [];
     for (var j = 0; j < hits.length && chosen.length < maxN; j++) {
@@ -372,7 +387,7 @@ function catChaos() {
     var hits = hitsIn(front, 1, null);
     var p = hits[0], px, py;
     if (p) { px = clamp(x + f * 34, p.l + 10, p.r - 10); py = clamp(y - 24, p.t + 8, p.b - 8); }
-    else if (cat.on && !cat.on.gone) { p = cat.on; px = clamp(x + f * 16, p.l + 10, p.r - 10); py = clamp(p.t + 14, p.t + 4, p.b - 4); }
+    else if (cat.on && cat.on !== "ground" && !cat.on.gone && !cat.on.ledge) { p = cat.on; px = clamp(x + f * 16, p.l + 10, p.r - 10); py = clamp(p.t + 14, p.t + 4, p.b - 4); }
     if (!p) { burst(x + f * 30, y - 20, 2, "fur"); return; }
     sfx("scratch");
     clawMark(px + rnd(-8, 8), py + rnd(-6, 6), p);
@@ -401,17 +416,23 @@ function catChaos() {
   function scheduleScan() { clearTimeout(scanTimer); scanTimer = setTimeout(scan, 500); }
 
   /* ---------- restore / quit ---------- */
-  function restore() {
+  var calm = W.matchMedia && W.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function restore(quiet) {
     for (var i = saved.length - 1; i >= 0; i--) {
       var s = saved[i];
       if (s.style == null) s.el.removeAttribute("style"); else s.el.setAttribute("style", s.style);
       s.el.removeAttribute("data-cc-gone");
+      if (s.el.animate && !calm) {
+        try { s.el.animate([{ opacity: 0, transform: "translateY(-40px)" }, { opacity: 1, transform: "none" }], { duration: 420, delay: (saved.length - 1 - i) * 35, easing: "cubic-bezier(.3,1.5,.6,1)", fill: "backwards" }); } catch (e) {}
+      }
     }
     saved = []; flyers = [];
     marksByEl.forEach(function (arr) { arr.forEach(function (m) { m.remove(); }); });
     marksByEl.clear();
     list.forEach(function (p) { p.dmg = 0; });
     scan();
+    lastRestoreKnocked = knocked;
+    if (quiet) return;
     meow("Fine. I'll do it again.");
     say("Page restored. The cat is already looking at the next thing.");
   }
@@ -464,7 +485,7 @@ function catChaos() {
   function onMouse(e) { mouse.x = e.clientX; mouse.y = e.clientY; mouse.moved = now(); }
   function onWheel() { freeCam = now(); }
   function onBlur() { keys = {}; }
-  W.addEventListener("keydown", kd, true); W.addEventListener("keyup", ku, true);
+  if (keysOn) { W.addEventListener("keydown", kd, true); W.addEventListener("keyup", ku, true); }
   W.addEventListener("resize", onResize); W.addEventListener("mousemove", onMouse, true);
   W.addEventListener("wheel", onWheel, { capture: true, passive: true }); W.addEventListener("blur", onBlur);
 
@@ -487,7 +508,7 @@ function catChaos() {
     return best;
   }
   function stillSupported() {
-    if (cat.on === "ground") { cat.y = docH() - 2; return true; }
+    if (cat.on === "ground") { cat.y = groundY(); return true; }
     var p = cat.on;
     if (!p || p.gone) return false;
     if (cat.x < p.l + 2 || cat.x > p.r - 2) return false;
@@ -499,13 +520,18 @@ function catChaos() {
     else if (cat.jumps < 2) { cat.vy = -11.2; cat.jumps = 2; sfx("jump"); burst(cat.x, cat.y, 5, "fur"); }
   }
 
+  function mouseInScope() {
+    if (mouse.x < 0) return false;
+    var r = scopeRect();
+    return mouse.x >= r.left && mouse.x <= r.right && mouse.y >= r.top && mouse.y <= r.bottom;
+  }
   function ai(dt, t) {
     var targetX = null, targetY = null;
-    var recent = t - mouse.moved < 3500 && mouse.x >= 0;
+    var recent = t - mouse.moved < 3500 && mouseInScope();
     if (recent) { targetX = mouse.x + W.scrollX; targetY = mouse.y + W.scrollY; aiTarget = null; }
     else {
       if (!aiTarget || aiTarget.gone || t > aiPickT) {
-        var vis = list.filter(function (p) { return !p.gone && p.b > W.scrollY && p.t < W.scrollY + W.innerHeight && p.area < 60000; });
+        var vis = list.filter(function (p) { return !p.gone && !p.ledge && p.b > W.scrollY && p.t < W.scrollY + W.innerHeight && p.area < 60000; });
         aiTarget = vis.length ? pick(vis) : null; aiPickT = t + 6000;
       }
       if (aiTarget) { targetX = (aiTarget.l + aiTarget.r) / 2; targetY = (aiTarget.t + aiTarget.b) / 2; }
@@ -540,7 +566,7 @@ function catChaos() {
 
     /* one-shot keys */
     if (pressed.help) toggleHelp();
-    if (pressed.restore) restore();
+    if (pressed.restore) restore(false);
     if (pressed.quit) { quit(); return; }
     if (pressed.laser) { laser = !laser; modeEl.textContent = laser ? "Laser pointer: on (move your mouse)" : "Laser pointer: off (press P)"; say(laser ? "Laser pointer on. Move your mouse, the cat will hunt it." : "Laser pointer off. You're driving again."); if (laser) mouse.moved = t; }
     if (pressed.meow) meow();
@@ -564,7 +590,8 @@ function catChaos() {
     if (mv !== 0) cat.face = mv;
     cat.vx += (mv * spd - cat.vx) * M.min(1, (cat.grounded ? 0.3 : 0.12) * dt);
     cat.x += cat.vx * dt;
-    var minX = W.scrollX + 22, maxX = W.scrollX + W.innerWidth - 22;
+    var sr = scopeRect();
+    var minX = W.scrollX + M.max(sr.left, 0) + 22, maxX = W.scrollX + M.min(sr.right, W.innerWidth) - 22;
     if (cat.x < minX) { cat.x = minX; cat.vx = 0; }
     if (cat.x > maxX) { cat.x = maxX; cat.vx = 0; }
 
@@ -575,7 +602,7 @@ function catChaos() {
       cat.vy = M.min(cat.vy + G * dt, 18);
       var ny = cat.y + cat.vy * dt;
       var p = cat.vy >= 0 ? landingFor(prevY, ny) : null;
-      var gy = docH() - 2;
+      var gy = groundY();
       if (p) { cat.y = p.t; cat.vy = 0; cat.grounded = true; cat.on = p; cat.jumps = 0; cat.land = 8; burst(cat.x, cat.y, 3, "dust"); }
       else if (ny >= gy) { cat.y = gy; cat.vy = 0; cat.grounded = true; cat.on = "ground"; cat.jumps = 0; cat.land = 8; }
       else cat.y = ny;
@@ -603,7 +630,7 @@ function catChaos() {
     /* camera */
     var vy = cat.y - W.scrollY, ih = W.innerHeight;
     var follow = (t - freeCam > 1400) || mv !== 0 || !cat.grounded;
-    if (follow && !cat.sleep) {
+    if (cameraOn && follow && !cat.sleep) {
       if (vy < ih * 0.28) scrollToY(W.scrollY + (vy - ih * 0.28) * 0.14 * dt);
       else if (vy > ih * 0.82) scrollToY(W.scrollY + (vy - ih * 0.82) * 0.14 * dt);
     }
@@ -625,15 +652,15 @@ function catChaos() {
       var hitP = null;
       for (var j = 0; j < list.length; j++) {
         var q = list[j];
-        if (q.gone || q.area > W.innerWidth * W.innerHeight * 0.45) continue;
+        if (q.gone || q.ledge || q.area > W.innerWidth * W.innerHeight * 0.45) continue;
         if (ball.x > q.l && ball.x < q.r && ball.y > q.t && ball.y < q.b) { if (!hitP || q.area < hitP.area) hitP = q; }
       }
       var sxB = ball.x - W.scrollX;
       if (hitP) {
         burst(ball.x, ball.y, 10, "fur"); floatText(ball.x, ball.y - 20, "SPLAT", "#6b7d3a", 16);
         knock(hitP, ball.vx > 0 ? 1 : -1, 1.4, "hairball"); balls.splice(b, 1);
-      } else if (ball.y > docH() || ball.life <= 0 || sxB < -40 || sxB > W.innerWidth + 40) {
-        burst(ball.x, M.min(ball.y, docH() - 4), 6, "fur"); balls.splice(b, 1);
+      } else if (ball.y > groundY() + 2 || ball.life <= 0 || sxB < -40 || sxB > W.innerWidth + 40) {
+        burst(ball.x, M.min(ball.y, groundY() - 2), 6, "fur"); balls.splice(b, 1);
       }
     }
 
@@ -653,6 +680,11 @@ function catChaos() {
       scoreEl.textContent = score.toLocaleString("en-US");
       knockedEl.textContent = knocked; comboEl.textContent = "x" + combo;
       rankEl.textContent = rank();
+    }
+
+    if (opts.autoRestore && knocked - lastRestoreKnocked >= opts.autoRestore && t - lastKnock > 1400 && !flyers.length) {
+      restore(true);
+      meow(pick(["Again.", "Mrrp. Again.", "Put it back. I'll wait."]));
     }
 
     draw(t);
@@ -735,6 +767,7 @@ function catChaos() {
   function drawCat(t) {
     var sx = cat.x - W.scrollX, sy = cat.y - W.scrollY;
     if (sy < -120 || sy > W.innerHeight + 120) {
+      if (!hudOn) return;
       ctx.fillStyle = "#ff7a1a";
       var ay = sy < 0 ? 18 : W.innerHeight - 18;
       ctx.beginPath(); ctx.moveTo(sx, ay + (sy < 0 ? -10 : 10)); ctx.lineTo(sx - 9, ay); ctx.lineTo(sx + 9, ay); ctx.closePath(); ctx.fill();
@@ -875,7 +908,7 @@ function catChaos() {
       ctx.restore();
     }
     drawCat(t);
-    if (laser && mouse.x >= 0) {
+    if (laser && mouseInScope()) {
       var g = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 14);
       g.addColorStop(0, "rgba(255,40,40,.9)"); g.addColorStop(0.3, "rgba(255,0,0,.45)"); g.addColorStop(1, "rgba(255,0,0,0)");
       ctx.fillStyle = g; ctx.beginPath(); ctx.arc(mouse.x, mouse.y, 14, 0, 6.283); ctx.fill();

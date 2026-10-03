@@ -3,55 +3,137 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Orange Cat Chaos: let a cat loose on any website</title>
+<title>Cat Chaos: knock any website off the table</title>
 <meta name="description" content="Type any website address and an orange cat walks onto the page and knocks everything off it.">
-<meta property="og:title" content="Orange Cat Chaos">
-<meta property="og:description" content="Type any website address. Let the cat in. Watch it knock everything off the table.">
+<meta property="og:title" content="Cat Chaos">
+<meta property="og:description" content="Type any website address. An orange cat knocks everything off it.">
+<meta name="theme-color" content="#2b45e0">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐈</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared.css">
 <style>
-.hero{padding:72px 0 56px}
-h1{font-size:clamp(46px,8vw,104px);line-height:.9;font-weight:800;margin:0 0 22px;letter-spacing:-.025em;color:var(--orange);max-width:12ch}
-h1 span{display:block;color:var(--cream)}
-.lede{font-size:20px;max-width:44ch;margin:0 0 34px;color:#e9dccd}
-form.address{display:flex;gap:10px;align-items:stretch;max-width:760px;background:var(--ink-2);padding:10px;border-radius:999px;border:2px solid var(--ink-3)}
-form.address:focus-within{border-color:var(--orange)}
-.field{flex:1;display:flex;align-items:center;min-width:0;padding-left:18px}
-.field span{color:var(--muted);font-weight:800;margin-right:2px}
-.field input{all:unset;flex:1;min-width:0;font:600 20px/1.2 "Bricolage Grotesque",system-ui,sans-serif;color:var(--cream);padding:12px 0}
-.field input::placeholder{color:#9b8cae}
-.picks{margin:18px 0 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:var(--muted);font-size:15px}
-.picks a{color:var(--cream);text-decoration:none;background:var(--ink-2);border:1px solid var(--ink-3);padding:7px 14px;border-radius:999px;font-weight:600}
-.picks a:hover{border-color:var(--orange-soft)}
-.below{background:#1b1525;padding:56px 0 64px}
-.cols{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:48px}
-h2{font-size:26px;font-weight:800;margin:0 0 16px}
-dl{display:grid;grid-template-columns:auto 1fr;gap:10px 16px;margin:0;align-items:center}
-dt{margin:0} dd{margin:0;color:#e9dccd}
-.note{color:var(--muted);font-size:15px;margin:18px 0 0;max-width:52ch}
-.bm{display:inline-flex;align-items:center;gap:8px;text-decoration:none;border:2px dashed var(--orange-soft);color:var(--cream);padding:13px 20px;border-radius:999px;font-weight:800;font-size:16px;cursor:grab;background:var(--ink-2);margin:4px 0 12px}
-.side p{color:#e9dccd;margin:0 0 12px;max-width:46ch}
-.copy{all:unset;cursor:pointer;font-weight:700;color:var(--orange-soft);text-decoration:underline;text-underline-offset:3px;font-size:15px}
-#codebox{display:none;width:100%;margin-top:10px;height:70px;background:#120e1a;color:var(--cream);border:1px solid var(--ink-3);border-radius:10px;font:12px/1.4 ui-monospace,monospace;padding:8px}
-footer{padding:28px 0 40px;color:#9b8cae;font-size:14px}
-@media (max-width:760px){
-  .hero{padding-top:48px}
-  form.address{flex-direction:column;border-radius:22px}
-  .field{padding:0 10px}
-  .go{text-align:center}
-  .cols{grid-template-columns:1fr;gap:40px}
+/* ---------- hero ---------- */
+.hero{background:var(--cobalt);color:var(--cream);position:relative;overflow:hidden;min-height:min(100vh,980px);display:flex;flex-direction:column}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(1200px 600px at 85% 10%,rgba(255,255,255,.08),transparent 60%);pointer-events:none}
+.nav{display:flex;align-items:center;gap:26px;padding-top:26px;padding-bottom:26px;position:relative}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font:800 26px/1 var(--display);font-synthesis:none;color:var(--cream);margin-right:auto}
+.brand svg{width:34px;height:34px}
+.nav a.link{color:var(--soft);text-decoration:none;font-weight:600;font-size:16px}
+.nav a.link:hover{color:var(--cream)}
+.hero > .wrap{width:100%}
+.hero-body{flex:1;display:flex;flex-direction:column;justify-content:center;padding-top:28px;padding-bottom:64px;position:relative}
+h1{font:800 clamp(54px,12.2vw,164px)/.84 var(--display);font-synthesis:none;margin:0 0 34px;letter-spacing:-.015em;color:var(--cream)}
+h1 .line{display:block;white-space:nowrap}
+h1 .ch{display:inline-block}
+.lede{font-size:clamp(18px,1.6vw,21px);line-height:1.55;max-width:42ch;margin:0 0 30px;color:var(--soft)}
+.address{display:flex;gap:8px;max-width:740px;background:var(--cream);padding:8px;border-radius:999px;box-shadow:0 10px 0 var(--cobalt-deep),0 24px 40px rgba(10,16,70,.35)}
+.address:focus-within{box-shadow:0 10px 0 var(--cobalt-deep),0 0 0 4px var(--orange),0 24px 40px rgba(10,16,70,.35)}
+.field{flex:1;display:flex;align-items:center;min-width:0;padding-left:20px;color:var(--navy)}
+.field span{font-weight:600;color:#6a7299;margin-right:1px}
+.field input{all:unset;flex:1;min-width:0;font:600 20px/1.2 var(--body);color:var(--navy);padding:14px 0}
+.field input::placeholder{color:#9aa1c4}
+.picks{margin:26px 0 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:15px;color:var(--soft)}
+.picks a{color:var(--cream);text-decoration:none;border:1.5px solid rgba(255,246,233,.35);padding:7px 15px;border-radius:999px;font-weight:600}
+.picks a:hover{background:rgba(255,246,233,.12);border-color:var(--cream)}
+.hint{margin:22px 0 0;font-size:15px;color:var(--soft);display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.dot{width:10px;height:10px;border-radius:50%;background:#ff3030;box-shadow:0 0 0 4px rgba(255,48,48,.25);display:inline-block}
+.loose{all:unset;cursor:pointer;font-weight:800;color:var(--cream);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.loose:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+
+/* ---------- moves ---------- */
+.moves{background:var(--sky);padding:96px 0 104px}
+.head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px 40px;margin-bottom:48px}
+h2{font:800 clamp(38px,5.4vw,68px)/.95 var(--display);font-synthesis:none;margin:0;letter-spacing:-.01em}
+.head p{margin:0;max-width:40ch;color:#3c4470}
+.keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+@media (max-width:980px){.keys{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.keys{grid-template-columns:1fr}}
+.move{display:flex;gap:18px;align-items:center;background:#fff;border-radius:22px;padding:18px 20px;border:2px solid var(--sky-2)}
+.cap{flex:none;min-width:64px;height:64px;padding:0 14px;display:grid;place-items:center;background:var(--cream);border-radius:14px;font:800 22px/1 var(--body);color:var(--navy);box-shadow:inset 0 -6px 0 #e7d6bf,0 3px 0 var(--navy);border:2px solid var(--navy)}
+.cap.wide{font-size:17px}
+.move h3{margin:0;font-size:19px;font-weight:800;line-height:1.2}
+.move p{margin:3px 0 0;font-size:15px;line-height:1.45;color:#4a5280}
+
+/* ---------- bookmarklet ---------- */
+.bm-sec{background:var(--navy);color:var(--cream);padding:104px 0}
+.bm-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:64px;align-items:center}
+.bm-sec h2{color:var(--cream)}
+.bm-sec .copy-text{color:var(--soft);max-width:44ch;margin:22px 0 28px}
+.bm-actions{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.bm{display:inline-flex;align-items:center;gap:9px;text-decoration:none;background:var(--orange);color:var(--navy);padding:14px 22px;border-radius:12px;font-weight:800;font-size:17px;cursor:grab;box-shadow:0 4px 0 var(--orange-deep)}
+.bm:active{cursor:grabbing}
+.copy{all:unset;cursor:pointer;font-weight:600;color:var(--soft);text-decoration:underline;text-underline-offset:3px;font-size:15px}
+.copy:hover{color:var(--cream)}
+.copy:focus-visible{outline:2px solid var(--orange)}
+#codebox{display:none;width:100%;margin-top:14px;height:72px;background:#0a0f2e;color:var(--cream);border:1px solid var(--navy-2);border-radius:10px;font:12px/1.4 ui-monospace,monospace;padding:8px}
+.browser{background:#f3f5fc;border-radius:16px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.4);color:var(--navy)}
+.chrome{display:flex;align-items:center;gap:7px;padding:12px 14px;background:#dfe4f3}
+.chrome i{width:11px;height:11px;border-radius:50%;background:#b9c0d8;display:block}
+.chrome .url{flex:1;margin-left:10px;background:#fff;border-radius:999px;padding:6px 14px;font-size:13px;color:#59618a}
+.marks{display:flex;align-items:center;gap:8px;padding:9px 14px;background:#eceffa;border-bottom:1px solid #dde2f2;font-size:13px;color:#4a5280;flex-wrap:wrap}
+.marks span{background:#fff;border-radius:6px;padding:4px 10px}
+.marks .slot{border:2px dashed var(--orange);color:var(--orange-deep);background:#fff3e6;font-weight:800}
+.page{padding:26px 22px 30px;display:grid;gap:12px;position:relative;min-height:190px}
+.page b:nth-child(4){transform:translate(150px,26px) rotate(24deg);background:#ffd2a8 !important}
+.claw{position:absolute;right:34px;top:30px;width:58px;height:50px}
+.paws{position:absolute;left:22px;bottom:16px;width:280px;height:46px}
+.page b{display:block;height:16px;border-radius:6px;background:#d9def0}
+.page b:nth-child(1){width:55%;height:26px;background:#c3cae6}
+.page b:nth-child(2){width:92%}
+.page b:nth-child(3){width:84%}
+.page b:nth-child(4){width:40%;height:60px;border-radius:10px}
+.page b:nth-child(5){width:88%}
+
+/* ---------- faq ---------- */
+.faq{background:var(--sky);padding:96px 0 104px}
+.faq-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:56px;align-items:start}
+details{background:#fff;border-radius:18px;border:2px solid var(--sky-2);margin-bottom:12px}
+summary{cursor:pointer;list-style:none;padding:20px 24px;font-weight:800;font-size:19px;display:flex;justify-content:space-between;gap:16px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font:400 30px/1 var(--display);color:var(--cobalt);transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{margin:0;padding:0 24px 22px;color:#4a5280;max-width:62ch}
+@media (prefers-reduced-motion: reduce){summary::after{transition:none}}
+
+footer{background:var(--navy);color:#9aa3d1;font-size:15px;padding:34px 0 44px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between;align-items:center}
+footer .brand{font-size:22px;margin:0}
+
+@media (max-width:860px){
+  .bm-grid,.faq-grid{grid-template-columns:1fr;gap:44px}
+}
+@media (max-width:640px){
+  .wrap{padding:0 20px}
+  .nav a.link{display:none}
+  .address{flex-direction:column;border-radius:28px;padding:8px}
+  .field{padding:4px 12px}
+  .moves,.bm-sec,.faq{padding:72px 0 80px}
 }
 </style>
 </head>
 <body>
-<main>
-  <section class="hero">
-    <div class="wrap">
-      <h1>Let the cat in <span>on any website.</span></h1>
-      <p class="lede">Type an address. An orange cat walks onto the page, climbs the text and images, and knocks every single thing off the table.</p>
+
+<header class="hero" id="hero">
+  <nav class="nav wrap" data-cat-safe aria-label="Main">
+    <a class="brand" href="/">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><ellipse cx="20" cy="26" rx="9" ry="8" fill="#ff8a1f"/><circle cx="9" cy="16" r="4.2" fill="#ff8a1f"/><circle cx="16" cy="9" r="4.2" fill="#ff8a1f"/><circle cx="24" cy="9" r="4.2" fill="#ff8a1f"/><circle cx="31" cy="16" r="4.2" fill="#ff8a1f"/></svg>
+      Cat Chaos
+    </a>
+    <a class="link" href="#moves">How to play</a>
+    <a class="link" href="#bookmarklet">Bookmarklet</a>
+    <a class="link" href="#faq">Questions</a>
+  </nav>
+
+  <div class="hero-body wrap">
+    <h1 id="headline" aria-label="Knock any website off the table.">
+      <span class="line" data-cat-ledge>Knock any</span>
+      <span class="line" data-cat-ledge>website off</span>
+      <span class="line" data-cat-ledge>the table.</span>
+    </h1>
+    <div data-cat-safe>
+      <p class="lede">Type an address. An orange cat walks onto the page, climbs the text and images, and knocks every single thing off. The real site stays untouched.</p>
       <form class="address" action="/play" method="get">
         <label class="field" for="url"><span aria-hidden="true">https://</span>
           <input id="url" name="url" type="text" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="en.wikipedia.org/wiki/Cat" required aria-label="Website address">
@@ -64,57 +146,147 @@ footer{padding:28px 0 40px;color:#9b8cae;font-size:14px}
         <a href="/play?url=https%3A%2F%2Fnews.ycombinator.com%2F">Hacker News</a>
         <a href="/demo">A very fragile porcelain shop</a>
       </div>
+      <p class="hint"><span class="dot" aria-hidden="true"></span><span>Your cursor is a laser pointer up here.</span><button class="loose" id="loose" type="button">Take control of this page</button></p>
+    </div>
+  </div>
+</header>
+<div class="table-edge" aria-hidden="true"></div>
+
+<main>
+  <section class="moves" id="moves">
+    <div class="wrap">
+      <div class="head">
+        <h2>Nine ways to<br>ruin a page.</h2>
+        <p>Once you're in, the keyboard is the cat. On a phone, buttons appear on screen instead.</p>
+      </div>
+      <div class="keys">
+        <div class="move"><span class="cap wide">&larr; &rarr;</span><div><h3>Walk</h3><p>Stroll across headlines, images and buttons like they're shelves.</p></div></div>
+        <div class="move"><span class="cap">&uarr;</span><div><h3>Jump</h3><p>Press twice to double jump. Hold &darr; and jump to drop through a ledge.</p></div></div>
+        <div class="move"><span class="cap">J</span><div><h3>Swat</h3><p>Smack whatever is in front. Hold &darr; to swat what's underneath.</p></div></div>
+        <div class="move"><span class="cap">K</span><div><h3>Scratch</h3><p>Hold it down. Claw marks pile up until the thing breaks.</p></div></div>
+        <div class="move"><span class="cap">L</span><div><h3>Hairball</h3><p>Cough one up and fire it across the page. Gross, effective.</p></div></div>
+        <div class="move"><span class="cap wide">Shift</span><div><h3>Zoomies</h3><p>Hold it to run at full 3 a.m. speed.</p></div></div>
+        <div class="move"><span class="cap">P</span><div><h3>Laser pointer</h3><p>The cat hunts your mouse and wrecks everything near it.</p></div></div>
+        <div class="move"><span class="cap">M</span><div><h3>Meow</h3><p>Says something. Usually a demand.</p></div></div>
+        <div class="move"><span class="cap">R</span><div><h3>Restore</h3><p>Put the page back together so the cat can do it all again.</p></div></div>
+      </div>
     </div>
   </section>
-  <div class="table-edge" aria-hidden="true"></div>
 
-  <section class="below">
-    <div class="wrap cols">
+  <section class="bm-sec" id="bookmarklet">
+    <div class="wrap bm-grid">
       <div>
-        <h2>How to be a menace</h2>
-        <dl>
-          <dt><kbd>&larr;</kbd> <kbd>&rarr;</kbd></dt><dd>Walk along the page</dd>
-          <dt><kbd>&uarr;</kbd> or <kbd>Space</kbd></dt><dd>Jump, press again for a double jump</dd>
-          <dt><kbd>&darr;</kbd> + <kbd>Space</kbd></dt><dd>Drop down through a ledge</dd>
-          <dt><kbd>J</kbd></dt><dd>Swat whatever is in front</dd>
-          <dt><kbd>K</kbd> hold</dt><dd>Scratch until it breaks</dd>
-          <dt><kbd>L</kbd></dt><dd>Cough up a hairball</dd>
-          <dt><kbd>Shift</kbd> hold</dt><dd>Zoomies</dd>
-          <dt><kbd>P</kbd></dt><dd>Laser pointer: the cat chases your mouse</dd>
-          <dt><kbd>R</kbd></dt><dd>Put the page back together</dd>
-        </dl>
-        <p class="note">Pages open without their own scripts, so the cat gets a still copy to wreck. Sites that build everything with JavaScript, or that block visitors like this one, may show up empty. Links on the page keep working and open through Cat Chaos.</p>
-      </div>
-      <div class="side">
-        <h2>Take the cat with you</h2>
-        <p>For sites that won't load here, or pages you're logged into, use the bookmarklet. Drag the dashed button to your bookmarks bar, open any website, then click the bookmark.</p>
-        <a class="bm" id="bookmarklet" href="#" title="Drag me to your bookmarks bar">&#x1F408; Cat Chaos</a>
-        <p><button class="copy" id="copy">Copy bookmarklet code</button></p>
+        <h2>Bring the cat to any site.</h2>
+        <p class="copy-text">Some sites refuse to open here. The bookmarklet skips that and runs the cat right on the page you're looking at, even pages you're logged into. Drag the orange button to your bookmarks bar, open any website, then click it.</p>
+        <div class="bm-actions">
+          <a class="bm" id="bm" href="#" title="Drag me to your bookmarks bar">&#x1F408; Cat Chaos</a>
+          <button class="copy" id="copy" type="button">Copy the code instead</button>
+        </div>
         <textarea id="codebox" readonly aria-label="Bookmarklet code"></textarea>
+      </div>
+      <div class="browser" aria-hidden="true">
+        <div class="chrome"><i></i><i></i><i></i><div class="url">any-website-you-like.com</div></div>
+        <div class="marks"><span>Recipes</span><span>Work</span><span class="slot">Drop it here</span><span>Banking</span></div>
+        <div class="page"><b></b><b></b><b></b><b></b><b></b>
+          <svg class="claw" viewBox="0 0 34 30"><g fill="none" stroke-linecap="round"><path d="M7 2Q11 15 8 28" stroke="#4a1608" stroke-width="3.4"/><path d="M16 1Q20 15 17 29" stroke="#4a1608" stroke-width="3.4"/><path d="M25 2Q29 15 26 27" stroke="#4a1608" stroke-width="3.4"/></g></svg>
+          <svg class="paws" viewBox="0 0 180 30"><g fill="#ff8a1f" opacity=".55"><g transform="translate(6 12)"><ellipse cx="6" cy="9" rx="5" ry="4"/><circle cx="1" cy="3" r="2"/><circle cx="5" cy="0" r="2"/><circle cx="9" cy="0" r="2"/><circle cx="12" cy="3" r="2"/></g><g transform="translate(56 2)"><ellipse cx="6" cy="9" rx="5" ry="4"/><circle cx="1" cy="3" r="2"/><circle cx="5" cy="0" r="2"/><circle cx="9" cy="0" r="2"/><circle cx="12" cy="3" r="2"/></g><g transform="translate(106 12)"><ellipse cx="6" cy="9" rx="5" ry="4"/><circle cx="1" cy="3" r="2"/><circle cx="5" cy="0" r="2"/><circle cx="9" cy="0" r="2"/><circle cx="12" cy="3" r="2"/></g><g transform="translate(156 2)"><ellipse cx="6" cy="9" rx="5" ry="4"/><circle cx="1" cy="3" r="2"/><circle cx="5" cy="0" r="2"/><circle cx="9" cy="0" r="2"/><circle cx="12" cy="3" r="2"/></g></g></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" id="faq">
+    <div class="wrap faq-grid">
+      <h2>Questions people ask the cat.</h2>
+      <div>
+        <details><summary>Does this break the real website?</summary><p>No. The cat wrecks a copy that lives in your browser tab. Close it or press R and everything is back. The site's owners never see a thing.</p></details>
+        <details><summary>Why does a page take a few seconds?</summary><p>Many sites build their content with JavaScript after they load. When that happens, Cat Chaos opens the page in a full browser first, waits for it to finish, and hands the finished page to the cat.</p></details>
+        <details><summary>Why won't some sites open?</summary><p>Some sites block requests like ours, usually with a security check. Use the bookmarklet on those, since it runs inside your own browser.</p></details>
+        <details><summary>Can I type or log in on a page?</summary><p>No. Pages open as a still copy, and forms are switched off so nothing gets sent anywhere. Links still work and open the next page for the cat.</p></details>
+        <details><summary>Does it work on a phone?</summary><p>Yes. On-screen buttons replace the keyboard. It's more fun on a big screen, where there's more to knock over.</p></details>
       </div>
     </div>
   </section>
 </main>
-<footer><div class="wrap">Orange Cat Chaos. No real porcelain was harmed.</div></footer>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">Cat Chaos</span>
+    <span>No real websites, porcelain or cats were harmed.</span>
+  </div>
+</footer>
 
 <script src="/cat-chaos.js"></script>
 <script>
-(function(){
-  var href = "javascript:" + encodeURIComponent("(" + catChaos.toString() + ")();void 0");
-  var bm = document.getElementById("bookmarklet");
-  bm.setAttribute("href", href);
-  var form = document.querySelector("form.address");
-  form.addEventListener("submit", function(){
-    var b = form.querySelector(".go");
-    b.textContent = "Opening the page\u2026";
-    b.setAttribute("aria-busy", "true");
+(function () {
+  /* Split headline lines into letters the cat can knock off. */
+  document.querySelectorAll("#headline .line").forEach(function (line) {
+    var text = line.textContent.trim();
+    line.textContent = "";
+    text.split(" ").forEach(function (word, wi) {
+      if (wi) line.appendChild(document.createTextNode(" "));
+      var w = document.createElement("span");
+      w.style.whiteSpace = "nowrap";
+      w.setAttribute("aria-hidden", "true");
+      for (var i = 0; i < word.length; i++) {
+        var c = document.createElement("span");
+        c.className = "ch";
+        c.textContent = word[i];
+        w.appendChild(c);
+      }
+      line.appendChild(w);
+    });
   });
-  window.addEventListener("pageshow", function(){ var b = form.querySelector(".go"); b.textContent = "Let the cat in"; b.removeAttribute("aria-busy"); });
-  bm.addEventListener("click", function(e){ e.preventDefault(); catChaos(); });
-  document.getElementById("copy").addEventListener("click", function(){
+
+  /* Bookmarklet. */
+  var href = "javascript:" + encodeURIComponent("(" + catChaos.toString() + ")();void 0");
+  var bm = document.getElementById("bm");
+  bm.setAttribute("href", href);
+  bm.addEventListener("click", function (e) { e.preventDefault(); startFull(); });
+  document.getElementById("copy").addEventListener("click", function () {
     var btn = this, box = document.getElementById("codebox");
-    var fallback = function(){ box.style.display = "block"; box.value = href; box.focus(); box.select(); btn.textContent = "Copy the code below, then paste it as a new bookmark's URL."; };
-    try { navigator.clipboard.writeText(href).then(function(){ btn.textContent = "Copied. Paste it as a new bookmark's URL."; }, fallback); } catch (e) { fallback(); }
+    var fallback = function () { box.style.display = "block"; box.value = href; box.focus(); box.select(); btn.textContent = "Copy the code below, then paste it as a new bookmark's URL."; };
+    try { navigator.clipboard.writeText(href).then(function () { btn.textContent = "Copied. Paste it as a new bookmark's URL."; }, fallback); } catch (e) { fallback(); }
+  });
+
+  /* Loading state on submit. */
+  var form = document.querySelector(".address");
+  var go = form.querySelector(".go");
+  form.addEventListener("submit", function () { go.textContent = "Opening the page\u2026"; go.setAttribute("aria-busy", "true"); });
+  window.addEventListener("pageshow", function () { go.textContent = "Let the cat in"; go.removeAttribute("aria-busy"); });
+
+  /* The ambient cat lives in the hero and plays by itself. */
+  var hero = document.getElementById("hero");
+  var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var mode = "off";
+  function stop() {
+    if (window.__catChaos) { try { window.__catChaos.restore(true); } catch (e) {} window.__catChaos.quit(); }
+    mode = "off";
+  }
+  function startAmbient() {
+    if (calm || mode !== "off") return;
+    var small = window.innerWidth < 640;
+    catChaos({ hud: false, keys: false, camera: false, auto: true, scope: hero, scale: small ? 1.25 : 1.7, autoRestore: 14 });
+    mode = "ambient";
+  }
+  function startFull() {
+    stop();
+    catChaos();
+    mode = "full";
+  }
+  document.getElementById("loose").addEventListener("click", function () { this.blur(); startFull(); });
+
+  var ready = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+  ready.then(function () {
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        var visible = entries[0].isIntersecting;
+        if (mode === "full") return;
+        if (visible) startAmbient(); else if (mode === "ambient") stop();
+      }, { threshold: 0.15 }).observe(hero);
+    } else {
+      startAmbient();
+    }
   });
 })();
 </script>

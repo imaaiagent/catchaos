@@ -4,18 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The cat couldn't get in</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐈</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared.css">
 <style>
-main{padding:80px 0}
-h1{font-size:clamp(38px,6vw,64px);line-height:1;margin:0 0 18px;color:var(--orange);font-weight:800}
-p{font-size:19px;max-width:52ch;color:#e9dccd;margin:0 0 30px}
-form{display:flex;gap:10px;flex-wrap:wrap;max-width:720px}
-input{flex:1;min-width:220px;font:600 18px/1.2 "Bricolage Grotesque",system-ui,sans-serif;color:var(--cream);background:var(--ink-2);border:2px solid var(--ink-3);border-radius:999px;padding:16px 20px}
-input:focus{border-color:var(--orange);outline:none}
-.back{display:inline-block;margin-top:22px;font-weight:700}
+body{background:var(--cobalt);color:var(--cream);min-height:100vh;display:flex;flex-direction:column}
+main{flex:1;display:flex;align-items:center;padding:72px 0}
+h1{font:800 clamp(44px,8vw,96px)/.9 var(--display);font-synthesis:none;margin:0 0 22px;letter-spacing:-.01em}
+p{font-size:20px;max-width:50ch;color:var(--soft);margin:0 0 32px}
+form{display:flex;gap:8px;max-width:720px;background:var(--cream);padding:8px;border-radius:999px;box-shadow:0 8px 0 var(--cobalt-deep)}
+input{all:unset;flex:1;min-width:0;font:600 18px/1.2 var(--body);color:var(--navy);padding:14px 18px}
+.back{display:inline-block;margin-top:26px;font-weight:600;color:var(--cream)}
+@media (max-width:640px){form{flex-direction:column;border-radius:26px}}
 </style>
 </head>
 <body>
@@ -28,5 +30,6 @@ input:focus{border-color:var(--orange);outline:none}
   </form>
   <a class="back" href="/">Back to the start</a>
 </div></main>
+<div class="table-edge" aria-hidden="true"></div>
 </body>
 </html>
