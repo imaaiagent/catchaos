@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The cat couldn't get in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css">
+<style>
+main{padding:80px 0}
+h1{font-size:clamp(38px,6vw,64px);line-height:1;margin:0 0 18px;color:var(--orange);font-weight:800}
+p{font-size:19px;max-width:52ch;color:#e9dccd;margin:0 0 30px}
+form{display:flex;gap:10px;flex-wrap:wrap;max-width:720px}
+input{flex:1;min-width:220px;font:600 18px/1.2 "Bricolage Grotesque",system-ui,sans-serif;color:var(--cream);background:var(--ink-2);border:2px solid var(--ink-3);border-radius:999px;padding:16px 20px}
+input:focus{border-color:var(--orange);outline:none}
+.back{display:inline-block;margin-top:22px;font-weight:700}
+</style>
+</head>
+<body>
+<main><div class="wrap">
+  <h1>The cat couldn't get in.</h1>
+  <p>__MESSAGE__</p>
+  <form action="/play" method="get">
+    <input name="url" type="text" inputmode="url" autocapitalize="off" spellcheck="false" value="__URL__" aria-label="Website address" required>
+    <button class="go" type="submit">Try again</button>
+  </form>
+  <a class="back" href="/">Back to the start</a>
+</div></main>
+</body>
+</html>

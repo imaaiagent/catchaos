@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Porcelain &amp; Co. (demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --ink:#231c30; --ink-2:#3a2f4d; --orange:#ff7a1a; --orange-soft:#ffb066; --cream:#fff4ea;
+  --bg:#f7f9fd; --surface:#ffffff; --delft:#2a4b9b; --navy:#16264f; --pale:#e3eaf6; --gold:#a8873a; --text:#1d2740; --muted:#55607a; --line:#d4ddee;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1626; --surface:#162037; --delft:#8fb0f0; --navy:#dbe5fa; --pale:#1d2a47; --gold:#d6b46a; --text:#e5ebf7; --muted:#a2adc6; --line:#2a3858;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1626; --surface:#162037; --delft:#8fb0f0; --navy:#dbe5fa; --pale:#1d2a47; --gold:#d6b46a; --text:#e5ebf7; --muted:#a2adc6; --line:#2a3858;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;padding-top:56px;background:var(--bg);color:var(--text);font:400 17px/1.6 Jost,"Avenir Next","Segoe UI",sans-serif}
+img,svg{max-width:100%}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+
+/* ---------- victim shop ---------- */
+.shop{font-family:Jost,"Avenir Next","Segoe UI",sans-serif}
+.serif{font-family:"Cormorant Garamond",Georgia,serif}
+.nav{max-width:1120px;margin:0 auto;padding:22px 24px;display:flex;align-items:center;gap:28px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.logo{font-family:"Cormorant Garamond",Georgia,serif;font-size:30px;font-weight:600;color:var(--navy);margin-right:auto;text-decoration:none}
+.nav a.link{text-decoration:none;color:var(--muted);font-size:16px}
+.nav a.link:hover{color:var(--delft)}
+.cart{border:1px solid var(--delft);color:var(--delft);border-radius:999px;padding:6px 16px;text-decoration:none;font-size:15px}
+
+.hero{max-width:1120px;margin:0 auto;padding:64px 24px 40px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:end}
+.hero h2{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-size:clamp(40px,5.6vw,68px);line-height:1.02;margin:0 0 20px;color:var(--navy)}
+.hero p{font-size:18px;color:var(--muted);max-width:44ch;margin:0 0 28px;line-height:1.7}
+.btn{display:inline-block;padding:13px 24px;border-radius:2px;font:500 16px/1 Jost,sans-serif;text-decoration:none;border:1px solid var(--delft);cursor:pointer}
+.btn.solid{background:var(--delft);color:var(--bg)}
+.btn.ghost{background:transparent;color:var(--delft);margin-left:8px}
+.shelf{display:flex;justify-content:center;align-items:flex-end;gap:14px;padding:0 10px;border-bottom:10px solid var(--gold);position:relative}
+.shelf svg{height:auto}
+
+.notice{max-width:1120px;margin:20px auto 0;padding:0 24px}
+.notice div{border:1px solid var(--gold);background:var(--pale);padding:14px 20px;color:var(--text);font-size:16px}
+
+.section{max-width:1120px;margin:0 auto;padding:56px 24px 24px}
+.section h3{font-family:"Cormorant Garamond",Georgia,serif;font-size:40px;font-weight:500;margin:0 0 6px;color:var(--navy)}
+.section > p{color:var(--muted);margin:0 0 30px;max-width:60ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:22px}
+.item{background:var(--surface);border:1px solid var(--line);padding:22px 20px 20px;display:flex;flex-direction:column}
+.item .art{background:var(--pale);display:grid;place-items:center;height:170px;margin-bottom:16px}
+.item h4{font-family:"Cormorant Garamond",Georgia,serif;font-size:24px;font-weight:600;margin:0;color:var(--navy);line-height:1.15}
+.item .desc{font-size:15px;color:var(--muted);margin:6px 0 14px;flex:1}
+.item .foot{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.price{font-weight:500;color:var(--text)}
+.add{all:unset;cursor:pointer;font-size:14px;color:var(--delft);border-bottom:1px solid var(--delft);padding-bottom:2px}
+
+.quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:26px}
+blockquote{margin:0;font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:24px;line-height:1.35;color:var(--navy);border-left:2px solid var(--gold);padding-left:18px}
+blockquote cite{display:block;font-family:Jost,sans-serif;font-style:normal;font-size:14px;color:var(--muted);margin-top:10px}
+
+.news{max-width:1120px;margin:40px auto 0;padding:0 24px}
+.news-in{border:1px solid var(--line);background:var(--surface);padding:30px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}
+.news h3{font-family:"Cormorant Garamond",Georgia,serif;font-size:30px;font-weight:500;margin:0;color:var(--navy)}
+.news p{margin:4px 0 0;color:var(--muted);font-size:15px}
+.news form{display:flex;gap:8px;flex-wrap:wrap}
+.news input{font:inherit;font-size:16px;padding:11px 14px;border:1px solid var(--line);background:var(--bg);color:var(--text);min-width:220px}
+
+footer{max-width:1120px;margin:56px auto 0;padding:28px 24px 48px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:16px 32px;color:var(--muted);font-size:14px}
+footer .logo{font-size:22px}
+
+@media (max-width:820px){
+    .hero{grid-template-columns:1fr}
+  .btn.ghost{margin:10px 0 0}
+}
+@media (prefers-reduced-motion: reduce){ .go{transition:none} }
+</style>
+</head>
+<body>
+
+<main class="shop">
+  <nav class="nav">
+    <a class="logo" href="#">Porcelain &amp; Co.</a>
+    <a class="link" href="#collection">Collection</a>
+    <a class="link" href="#heirlooms">Heirlooms</a>
+    <a class="link" href="#care">Care guide</a>
+    <a class="cart" href="#">Cart (2)</a>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <h2>Handmade porcelain, kept perfectly on the shelf.</h2>
+      <p>Every piece is fired twice, painted by hand in cobalt blue, and handled only with white gloves. Nothing in this shop has ever been knocked over.</p>
+      <a class="btn solid" href="#collection">Shop the collection</a>
+      <a class="btn ghost" href="#">Book a private viewing</a>
+    </div>
+    <div class="shelf" aria-label="Featured pieces on a shelf">
+      <svg width="96" height="150" viewBox="0 0 96 150" aria-hidden="true"><path d="M36 6h24v10c0 4 20 16 20 50 0 40-14 70-32 78-18-8-32-38-32-78 0-34 20-46 20-50z" fill="var(--surface)" stroke="var(--delft)" stroke-width="2.5"/><path d="M48 52v54M48 70c-10-4-16-12-14-22 8 2 14 10 14 22zM48 70c10-4 16-12 14-22-8 2-14 10-14 22zM48 92c-12-2-18-10-17-18 9 1 15 8 17 18zM48 92c12-2 18-10 17-18-9 1-15 8-17 18z" fill="none" stroke="var(--delft)" stroke-width="2"/><circle cx="48" cy="46" r="5" fill="var(--delft)"/><path d="M30 124h36M34 18h28" stroke="var(--delft)" stroke-width="2"/></svg>
+      <svg width="130" height="110" viewBox="0 0 130 110" aria-hidden="true"><path d="M24 54C10 50 4 34 12 28" fill="none" stroke="var(--delft)" stroke-width="3"/><path d="M98 50c14-8 18 8 8 22-6 8-12 10-16 12" fill="none" stroke="var(--delft)" stroke-width="3"/><ellipse cx="62" cy="66" rx="40" ry="34" fill="var(--surface)" stroke="var(--delft)" stroke-width="2.5"/><path d="M26 68c-12-4-18-18-22-26 10 2 20 12 24 18" fill="var(--surface)" stroke="var(--delft)" stroke-width="2.5"/><path d="M42 34c4-12 36-12 40 0z" fill="var(--surface)" stroke="var(--delft)" stroke-width="2.5"/><circle cx="62" cy="22" r="5" fill="var(--delft)"/><path d="M30 66c10-8 18 8 32 0s20-8 32 0" fill="none" stroke="var(--delft)" stroke-width="2"/><path d="M40 84h44" stroke="var(--delft)" stroke-width="2"/></svg>
+      <svg width="100" height="120" viewBox="0 0 100 120" aria-hidden="true"><path d="M36 8h28v8H36z" fill="var(--delft)"/><path d="M38 16h24v6c22 6 30 24 30 44 0 30-20 46-42 46S8 96 8 66c0-20 8-38 30-44z" fill="var(--surface)" stroke="var(--delft)" stroke-width="2.5"/><path d="M14 52h72M14 92h72" stroke="var(--delft)" stroke-width="2"/><path d="M30 72c6-10 14-10 20 0s14 10 20 0" fill="none" stroke="var(--delft)" stroke-width="2.2"/><circle cx="30" cy="72" r="3" fill="var(--delft)"/><circle cx="70" cy="72" r="3" fill="var(--delft)"/></svg>
+    </div>
+  </section>
+
+  <div class="notice"><div><strong>Store policy:</strong> absolutely no pets on the premises. Please keep all animals outside the website.</div></div>
+
+  <section class="section" id="collection">
+    <h3>The autumn collection</h3>
+    <p>Six pieces from our studio in Delft, each signed on the base. Ships in triple-layer packaging.</p>
+    <div class="grid">
+      <article class="item"><div class="art"><svg width="96" height="150" viewBox="0 0 96 150" aria-hidden="true"><path d="M36 6h24v10c0 4 20 16 20 50 0 40-14 70-32 78-18-8-32-38-32-78 0-34 20-46 20-50z" fill="var(--surface)" stroke="var(--delft)" stroke-width="2.5"/><path d="M48 52v54M48 70c-10-4-16-12-14-22 8 2 14 10 14 22zM48 70c10-4 16-12 14-22-8 2-14 10-14 22zM48 92c-12-2-18-10-17-18 9 1 15 8 17 18zM48 92c12-2 18-10 17-18-9 1-15 8-17 18z" fill="none" stroke="var(--delft)" stroke-width="2"/><circle cx="48" cy="46" r="5" fill="var(--delft)"/><path d="M30 124h36M34 18h28" stroke="var(--delft)" stroke-width="2"/></svg></div><h4>Delft Tulip Vase</h4><p class="desc">Hand-thrown, 34 cm, painted with spring tulips.</p><div class="foot"><span class="price">$420</span><button class="add">Add to cart</button></div></article>
+      <article class="item"><div class="art"><svg width="130" height="100" viewBox="0 0 130 100" aria-hidden="true"><ellipse cx="62" cy="84" rx="54" ry="10" fill="var(--surface)" stroke="var(--delft)" stroke-width="2.5"/><path d="M92 40c18-4 20 22 0 24" fill="none" stroke="var(--delft)" stroke-width="3"/><path d="M24 30h76c0 26-14 46-38 46S24 56 24 30z" fill="var(--surface)" stroke="var(--delft)" stroke-width="2.5"/><path d="M30 40h64" stroke="var(--delft)" stroke-width="2"/><path d="M44 56c4-6 10-6 14 0s10 6 14 0" fill="none" stroke="var(--delft)" stroke-width="2"/></svg></div><h4>Grandmother's Teacup</h4><p class="desc">Eggshell-thin. Do not breathe near it.</p><div class="foot"><span class="price">$180</span><button class="add">Add to cart</button></div></article>
+      <article class="item"><div class="art"><svg width="130" height="130" viewBox="0 0 130 130" aria-hidden="true"><circle cx="65" cy="65" r="58" fill="var(--surface)" stroke="var(--delft)" stroke-width="2.5"/><circle cx="65" cy="65" r="44" fill="none" stroke="var(--delft)" stroke-width="1.5" stroke-dasharray="4 5"/><circle cx="65" cy="65" r="30" fill="none" stroke="var(--delft)" stroke-width="2"/><path d="M65 43c6 8 6 14 0 22-6-8-6-14 0-22zM65 87c6-8 6-14 0-22-6 8-6 14 0 22zM43 65c8-6 14-6 22 0-8 6-14 6-22 0zM87 65c-8-6-14-6-22 0 8 6 14 6 22 0z" fill="var(--delft)"/></svg></div><h4>The Very Fragile Plate</h4><p class="desc">Decorative only. Has survived 140 years so far.</p><div class="foot"><span class="price">$95</span><button class="add">Add to cart</button></div></article>
+      <article class="item"><div class="art"><svg width="130" height="110" viewBox="0 0 130 110" aria-hidden="true"><path d="M24 54C10 50 4 34 12 28" fill="none" stroke="var(--delft)" stroke-width="3"/><path d="M98 50c14-8 18 8 8 22-6 8-12 10-16 12" fill="none" stroke="var(--delft)" stroke-width="3"/><ellipse cx="62" cy="66" rx="40" ry="34" fill="var(--surface)" stroke="var(--delft)" stroke-width="2.5"/><path d="M26 68c-12-4-18-18-22-26 10 2 20 12 24 18" fill="var(--surface)" stroke="var(--delft)" stroke-width="2.5"/><path d="M42 34c4-12 36-12 40 0z" fill="var(--surface)" stroke="var(--delft)" stroke-width="2.5"/><circle cx="62" cy="22" r="5" fill="var(--delft)"/><path d="M30 66c10-8 18 8 32 0s20-8 32 0" fill="none" stroke="var(--delft)" stroke-width="2"/><path d="M40 84h44" stroke="var(--delft)" stroke-width="2"/></svg></div><h4>Blue Willow Teapot</h4><p class="desc">Holds six cups. The lid is held on by hope.</p><div class="foot"><span class="price">$310</span><button class="add">Add to cart</button></div></article>
+      <article class="item"><div class="art"><svg width="130" height="110" viewBox="0 0 130 110" aria-hidden="true"><path d="M20 76c10 20 70 24 92 4 6-6 4-18-6-16-12 2-24 6-34 2 8-8 6-30-6-40-10-8-24 0-22 10 2 8 10 6 12 2" fill="rgba(143,176,240,.25)" stroke="var(--delft)" stroke-width="2.5" stroke-linejoin="round"/><path d="M58 34c-4-2-10 0-12-4" fill="none" stroke="var(--delft)" stroke-width="2"/><circle cx="54" cy="31" r="2" fill="var(--delft)"/><path d="M36 80c18 6 44 6 62-4M50 70c10 4 26 4 40-2" fill="none" stroke="var(--delft)" stroke-width="1.6"/></svg></div><h4>Glass Swan</h4><p class="desc">Do not touch. Do not look at it for too long.</p><div class="foot"><span class="price">$1,200</span><button class="add">Add to cart</button></div></article>
+      <article class="item"><div class="art"><svg width="100" height="120" viewBox="0 0 100 120" aria-hidden="true"><path d="M36 8h28v8H36z" fill="var(--delft)"/><path d="M38 16h24v6c22 6 30 24 30 44 0 30-20 46-42 46S8 96 8 66c0-20 8-38 30-44z" fill="var(--surface)" stroke="var(--delft)" stroke-width="2.5"/><path d="M14 52h72M14 92h72" stroke="var(--delft)" stroke-width="2"/><path d="M30 72c6-10 14-10 20 0s14 10 20 0" fill="none" stroke="var(--delft)" stroke-width="2.2"/><circle cx="30" cy="72" r="3" fill="var(--delft)"/><circle cx="70" cy="72" r="3" fill="var(--delft)"/></svg></div><h4>Antique Ginger Jar</h4><p class="desc">Qing-style lidded jar, perfectly balanced on a narrow base.</p><div class="foot"><span class="price">$260</span><button class="add">Add to cart</button></div></article>
+    </div>
+  </section>
+
+  <section class="section" id="heirlooms">
+    <h3>What our customers say</h3>
+    <p>Collected from people who have never owned a cat.</p>
+    <div class="quotes">
+      <blockquote>“The jar arrived without a single chip. I keep it on the very edge of my mantelpiece.”<cite>Margaret, Bath</cite></blockquote>
+      <blockquote>“Finally, a shop where nothing is ever out of place. I find it deeply calming.”<cite>Henrik, Copenhagen</cite></blockquote>
+      <blockquote>“I bought the glass swan for the coffee table. What could go wrong?”<cite>Dana, Portland</cite></blockquote>
+    </div>
+  </section>
+
+  <section class="news" id="care">
+    <div class="news-in">
+      <div><h3>The care letter</h3><p>One email a month on dusting, displaying and never dropping your porcelain.</p></div>
+      <form onsubmit="event.preventDefault();this.querySelector('button').textContent='Subscribed';">
+        <input type="email" placeholder="you@example.com" aria-label="Email address">
+        <button class="btn solid" type="submit">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <span class="logo">Porcelain &amp; Co.</span>
+    <span>Studio open Tuesday to Saturday, gloves provided.</span>
+    <span>No refunds for pieces broken by animals.</span>
+  </footer>
+</main>
+
+<script>window.__CAT_CHAOS_CFG={proxied:false,original:null};</script>
+<script src="/cat-chaos.js"></script>
+<script src="/boot.js"></script>
+</body>
+</html>

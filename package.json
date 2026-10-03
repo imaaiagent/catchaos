@@ -1,0 +1,19 @@
+{
+  "name": "orange-cat-chaos",
+  "version": "1.0.0",
+  "description": "Type any website address and let an orange cat knock everything off it.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "express": "^4.21.2",
+    "ipaddr.js": "^2.2.0",
+    "undici": "^6.21.0"
+  }
+}

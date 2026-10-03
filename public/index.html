@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orange Cat Chaos: let a cat loose on any website</title>
+<meta name="description" content="Type any website address and an orange cat walks onto the page and knocks everything off it.">
+<meta property="og:title" content="Orange Cat Chaos">
+<meta property="og:description" content="Type any website address. Let the cat in. Watch it knock everything off the table.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐈</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css">
+<style>
+.hero{padding:72px 0 56px}
+h1{font-size:clamp(46px,8vw,104px);line-height:.9;font-weight:800;margin:0 0 22px;letter-spacing:-.025em;color:var(--orange);max-width:12ch}
+h1 span{display:block;color:var(--cream)}
+.lede{font-size:20px;max-width:44ch;margin:0 0 34px;color:#e9dccd}
+form.address{display:flex;gap:10px;align-items:stretch;max-width:760px;background:var(--ink-2);padding:10px;border-radius:999px;border:2px solid var(--ink-3)}
+form.address:focus-within{border-color:var(--orange)}
+.field{flex:1;display:flex;align-items:center;min-width:0;padding-left:18px}
+.field span{color:var(--muted);font-weight:800;margin-right:2px}
+.field input{all:unset;flex:1;min-width:0;font:600 20px/1.2 "Bricolage Grotesque",system-ui,sans-serif;color:var(--cream);padding:12px 0}
+.field input::placeholder{color:#9b8cae}
+.picks{margin:18px 0 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:var(--muted);font-size:15px}
+.picks a{color:var(--cream);text-decoration:none;background:var(--ink-2);border:1px solid var(--ink-3);padding:7px 14px;border-radius:999px;font-weight:600}
+.picks a:hover{border-color:var(--orange-soft)}
+.below{background:#1b1525;padding:56px 0 64px}
+.cols{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:48px}
+h2{font-size:26px;font-weight:800;margin:0 0 16px}
+dl{display:grid;grid-template-columns:auto 1fr;gap:10px 16px;margin:0;align-items:center}
+dt{margin:0} dd{margin:0;color:#e9dccd}
+.note{color:var(--muted);font-size:15px;margin:18px 0 0;max-width:52ch}
+.bm{display:inline-flex;align-items:center;gap:8px;text-decoration:none;border:2px dashed var(--orange-soft);color:var(--cream);padding:13px 20px;border-radius:999px;font-weight:800;font-size:16px;cursor:grab;background:var(--ink-2);margin:4px 0 12px}
+.side p{color:#e9dccd;margin:0 0 12px;max-width:46ch}
+.copy{all:unset;cursor:pointer;font-weight:700;color:var(--orange-soft);text-decoration:underline;text-underline-offset:3px;font-size:15px}
+#codebox{display:none;width:100%;margin-top:10px;height:70px;background:#120e1a;color:var(--cream);border:1px solid var(--ink-3);border-radius:10px;font:12px/1.4 ui-monospace,monospace;padding:8px}
+footer{padding:28px 0 40px;color:#9b8cae;font-size:14px}
+@media (max-width:760px){
+  .hero{padding-top:48px}
+  form.address{flex-direction:column;border-radius:22px}
+  .field{padding:0 10px}
+  .go{text-align:center}
+  .cols{grid-template-columns:1fr;gap:40px}
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <h1>Let the cat in <span>on any website.</span></h1>
+      <p class="lede">Type an address. An orange cat walks onto the page, climbs the text and images, and knocks every single thing off the table.</p>
+      <form class="address" action="/play" method="get">
+        <label class="field" for="url"><span aria-hidden="true">https://</span>
+          <input id="url" name="url" type="text" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="en.wikipedia.org/wiki/Cat" required aria-label="Website address">
+        </label>
+        <button class="go" type="submit">Let the cat in</button>
+      </form>
+      <div class="picks">
+        <span>Or try</span>
+        <a href="/play?url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FCat">Wikipedia: Cat</a>
+        <a href="/play?url=https%3A%2F%2Fnews.ycombinator.com%2F">Hacker News</a>
+        <a href="/demo">A very fragile porcelain shop</a>
+      </div>
+    </div>
+  </section>
+  <div class="table-edge" aria-hidden="true"></div>
+
+  <section class="below">
+    <div class="wrap cols">
+      <div>
+        <h2>How to be a menace</h2>
+        <dl>
+          <dt><kbd>&larr;</kbd> <kbd>&rarr;</kbd></dt><dd>Walk along the page</dd>
+          <dt><kbd>&uarr;</kbd> or <kbd>Space</kbd></dt><dd>Jump, press again for a double jump</dd>
+          <dt><kbd>&darr;</kbd> + <kbd>Space</kbd></dt><dd>Drop down through a ledge</dd>
+          <dt><kbd>J</kbd></dt><dd>Swat whatever is in front</dd>
+          <dt><kbd>K</kbd> hold</dt><dd>Scratch until it breaks</dd>
+          <dt><kbd>L</kbd></dt><dd>Cough up a hairball</dd>
+          <dt><kbd>Shift</kbd> hold</dt><dd>Zoomies</dd>
+          <dt><kbd>P</kbd></dt><dd>Laser pointer: the cat chases your mouse</dd>
+          <dt><kbd>R</kbd></dt><dd>Put the page back together</dd>
+        </dl>
+        <p class="note">Pages open without their own scripts, so the cat gets a still copy to wreck. Sites that build everything with JavaScript, or that block visitors like this one, may show up empty. Links on the page keep working and open through Cat Chaos.</p>
+      </div>
+      <div class="side">
+        <h2>Take the cat with you</h2>
+        <p>For sites that won't load here, or pages you're logged into, use the bookmarklet. Drag the dashed button to your bookmarks bar, open any website, then click the bookmark.</p>
+        <a class="bm" id="bookmarklet" href="#" title="Drag me to your bookmarks bar">&#x1F408; Cat Chaos</a>
+        <p><button class="copy" id="copy">Copy bookmarklet code</button></p>
+        <textarea id="codebox" readonly aria-label="Bookmarklet code"></textarea>
+      </div>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap">Orange Cat Chaos. No real porcelain was harmed.</div></footer>
+
+<script src="/cat-chaos.js"></script>
+<script>
+(function(){
+  var href = "javascript:" + encodeURIComponent("(" + catChaos.toString() + ")();void 0");
+  var bm = document.getElementById("bookmarklet");
+  bm.setAttribute("href", href);
+  bm.addEventListener("click", function(e){ e.preventDefault(); catChaos(); });
+  document.getElementById("copy").addEventListener("click", function(){
+    var btn = this, box = document.getElementById("codebox");
+    var fallback = function(){ box.style.display = "block"; box.value = href; box.focus(); box.select(); btn.textContent = "Copy the code below, then paste it as a new bookmark's URL."; };
+    try { navigator.clipboard.writeText(href).then(function(){ btn.textContent = "Copied. Paste it as a new bookmark's URL."; }, fallback); } catch (e) { fallback(); }
+  });
+})();
+</script>
+</body>
+</html>
