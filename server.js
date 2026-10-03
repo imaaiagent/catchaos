@@ -368,7 +368,7 @@ app.set("trust proxy", true);
 app.disable("x-powered-by");
 
 app.get("/healthz", (_req, res) => res.type("text").send("ok"));
-app.get("/version", (_req, res) => res.json({ version: "5.0.0", landing: "black-orange", fullBrowserRender: true }));
+app.get("/version", (_req, res) => res.json({ version: "5.2.0", landing: "black-orange", fullBrowserRender: true }));
 app.get("/demo", (_req, res) => res.sendFile(path.join(PUBLIC, "demo.html")));
 
 function originOf(req) {
@@ -396,7 +396,8 @@ app.get("/card.png", async (req, res) => {
   const key = data.intro ? "intro|" + host : shareQuery(data) + "|" + host;
   let png = cardCache.get(key);
   if (!png) {
-    if (cardLimited(req.ip)) return res.status(429).type("text").send("Too many cards. Try again in a minute.");
+    const bot = /twitterbot|facebookexternalhit|slackbot|discordbot|telegrambot|linkedinbot|whatsapp/i.test(req.get("user-agent") || "");
+    if (!bot && cardLimited(req.ip)) return res.status(429).type("text").send("Too many cards. Try again in a minute.");
     try {
       png = await renderer.screenshot(cardHtml(data, host), 1200, 630);
     } catch (err) {
@@ -457,4 +458,7 @@ app.get("/play", async (req, res) => {
 
 app.use((_req, res) => sendError(res, 404, "There's nothing at this address. Head back and type a website to open.", ""));
 
-app.listen(PORT, () => console.log(`Orange Cat Chaos is listening on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Orange Cat Chaos is listening on port ${PORT}`);
+  renderer.warm();
+});

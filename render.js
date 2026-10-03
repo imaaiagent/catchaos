@@ -252,5 +252,10 @@ export function createRenderer({ isPublicIp, FetchError, maxBytes, userAgent }) 
     });
   }
 
-  return { render, screenshot };
+  // Start Chromium ahead of time so the first card or render isn't slow.
+  function warm() {
+    return getBrowser().catch((e) => console.warn("Chromium warm-up skipped:", e.message));
+  }
+
+  return { render, screenshot, warm };
 }

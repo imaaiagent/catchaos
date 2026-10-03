@@ -441,16 +441,44 @@ function catChaos(opts) {
   }
   function shareScore() {
     var site = siteName();
-    var label = site === "demo" ? "a very fragile porcelain shop" : (site || "a website");
+    /* "One dot leader" instead of "." so X doesn't turn the site name into its own link and card. */
+    var label = site === "demo" ? "a very fragile porcelain shop" : (site ? site.replace(/\./g, "\u2024") : "a website");
     var q = "score=" + score + "&knocked=" + knocked + "&combo=" + bestCombo + "&rank=" + rankIndex() + "&site=" + encodeURIComponent(site);
     var text = knocked
       ? "My cat knocked " + knocked.toLocaleString("en-US") + (knocked === 1 ? " thing" : " things") + " off " + label + " \uD83D\uDC08\n\n" +
         "Score: " + score.toLocaleString("en-US") + "\nRank: " + RANKS[rankIndex()][1] + "\n\nCan your cat do worse?"
       : "I let an orange cat loose on " + label + " and it hasn't knocked anything off yet. Suspicious. \uD83D\uDC08";
+    var cardUrl = APP + "/card.png?" + q;
     var url = "https://x.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(APP + "/s?" + q);
+
+    /* Open one tab right away (so it isn't blocked), show a short wait message,
+       and only send it to X once the score card exists, so X always finds it. */
     var win = null;
-    try { win = W.open(url, "_blank", "noopener,noreferrer"); } catch (e) {}
-    if (!win) { try { W.top.location.href = url; } catch (e) { location.href = url; } }
+    try { win = W.open("", "_blank"); } catch (e) {}
+    if (win) {
+      try {
+        win.opener = null;
+        var d = win.document;
+        d.title = "Drawing your score card";
+        d.body.style.cssText = "margin:0;height:100vh;display:grid;place-items:center;background:#000;color:#f6f1ea;font:700 18px/1.4 " + FONT;
+        d.body.textContent = "\uD83D\uDC08 Drawing your score card\u2026";
+      } catch (e) {}
+    }
+    shareBtn.textContent = "Drawing your card\u2026";
+    var sent = false;
+    function go() {
+      if (sent) return;
+      sent = true;
+      shareBtn.textContent = "Share my score on \uD835\uDD4F";
+      if (win && !win.closed) { try { win.location.replace(url); return; } catch (e) {} }
+      location.href = url;
+    }
+    try {
+      var img = new Image();
+      img.onload = go; img.onerror = go;
+      img.src = cardUrl;
+    } catch (e) {}
+    setTimeout(go, 5000);
   }
   function updateBest() {
     if (score > best) {
