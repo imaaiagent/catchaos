@@ -103,6 +103,13 @@ footer{padding:28px 0 40px;color:#9b8cae;font-size:14px}
   var href = "javascript:" + encodeURIComponent("(" + catChaos.toString() + ")();void 0");
   var bm = document.getElementById("bookmarklet");
   bm.setAttribute("href", href);
+  var form = document.querySelector("form.address");
+  form.addEventListener("submit", function(){
+    var b = form.querySelector(".go");
+    b.textContent = "Opening the page\u2026";
+    b.setAttribute("aria-busy", "true");
+  });
+  window.addEventListener("pageshow", function(){ var b = form.querySelector(".go"); b.textContent = "Let the cat in"; b.removeAttribute("aria-busy"); });
   bm.addEventListener("click", function(e){ e.preventDefault(); catChaos(); });
   document.getElementById("copy").addEventListener("click", function(){
     var btn = this, box = document.getElementById("codebox");

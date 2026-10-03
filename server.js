@@ -8,6 +8,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRenderer, RenderUnavailable } from "./render.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC = path.join(__dirname, "public");
@@ -19,6 +20,8 @@ const TIMEOUT_MS = 12000;
 const CACHE_TTL_MS = 5 * 60 * 1000;
 const CACHE_MAX = 100;
 const RATE_LIMIT = 30;                 // page loads per IP per minute
+const RENDER_LIMIT = 10;               // full-browser renders per IP per minute
+const USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36";
 
 const ENGINE = fs.readFileSync(path.join(PUBLIC, "cat-chaos.js"), "utf8");
 const BOOT = fs.readFileSync(path.join(PUBLIC, "boot.js"), "utf8");
@@ -139,8 +142,7 @@ async function fetchPage(startUrl) {
         redirect: "manual",
         signal: AbortSignal.timeout(TIMEOUT_MS),
         headers: {
-          "user-agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36",
+          "user-agent": USER_AGENT,
           accept: "text/html,application/xhtml+xml;q=0.9,*/*;q=0.5",
           "accept-language": "en-US,en;q=0.9",
         },
@@ -194,7 +196,7 @@ function isPlaceholder(src) {
   return !src || /^data:/i.test(src) || /(blank|placeholder|spacer|pixel|1x1|transparent)\.(gif|png|svg)/i.test(src);
 }
 
-function transform(html, pageUrl) {
+function transform(html, pageUrl, mode) {
   const $ = cheerio.load(html, { scriptingEnabled: false });
 
   // Respect an existing <base>, then replace it with an absolute one.
@@ -253,14 +255,20 @@ function transform(html, pageUrl) {
     `<meta charset="utf-8"><base href="${escapeAttr(baseHref)}"><meta name="referrer" content="no-referrer">`
   );
 
-  const cfg = JSON.stringify({ proxied: true, original: pageUrl.href }).replace(/</g, "\\u003c");
+  // How much is actually on the page once scripts are gone? Used to detect empty app shells.
+  const $body = $("body").clone();
+  $body.find("style, template, svg, [hidden]").remove();
+  const textLength = $body.text().replace(/\s+/g, " ").trim().length;
+  const mediaCount = $("body img, body picture, body video").length;
+
+  const cfg = JSON.stringify({ proxied: true, original: pageUrl.href, mode }).replace(/</g, "\\u003c");
   $("body").append(
     `<script nonce="__NONCE__">window.__CAT_CHAOS_CFG=${cfg};</script>` +
     `<script nonce="__NONCE__">${ENGINE}</script>` +
     `<script nonce="__NONCE__">${BOOT}</script>`
   );
 
-  return "<!DOCTYPE html>\n" + $.html();
+  return { page: "<!DOCTYPE html>\n" + $.html(), looksEmpty: textLength < 250 && mediaCount < 3 };
 }
 
 function escapeAttr(s) {
@@ -286,18 +294,67 @@ function cacheSet(key, html) {
   while (cache.size > CACHE_MAX) cache.delete(cache.keys().next().value);
 }
 
-const hits = new Map();
-function rateLimited(ip) {
-  const now = Date.now();
-  const list = (hits.get(ip) || []).filter((t) => now - t < 60000);
-  list.push(now);
-  hits.set(ip, list);
-  return list.length > RATE_LIMIT;
+function makeLimiter(max) {
+  const hits = new Map();
+  setInterval(() => {
+    const now = Date.now();
+    for (const [ip, list] of hits) if (!list.some((t) => now - t < 60000)) hits.delete(ip);
+  }, 60000).unref();
+  return (ip) => {
+    const now = Date.now();
+    const list = (hits.get(ip) || []).filter((t) => now - t < 60000);
+    list.push(now);
+    hits.set(ip, list);
+    return list.length > max;
+  };
 }
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, list] of hits) if (!list.some((t) => now - t < 60000)) hits.delete(ip);
-}, 60000).unref();
+const rateLimited = makeLimiter(RATE_LIMIT);
+const renderLimited = makeLimiter(RENDER_LIMIT);
+
+const renderer = createRenderer({ isPublicIp, FetchError, maxBytes: MAX_BYTES, userAgent: USER_AGENT });
+
+// Static first (fast). Fall back to a full browser when the page is an empty app shell,
+// when the visitor asks for it, or when the plain request was refused.
+async function buildPage(target, forceRender, ip) {
+  const key = (forceRender ? "render:" : "auto:") + target.href;
+  const cached = cacheGet(key);
+  if (cached) return cached;
+
+  let staticResult = null, staticError = null;
+  if (!forceRender) {
+    try {
+      const { html, finalUrl } = await fetchPage(target);
+      staticResult = transform(html, finalUrl, "static");
+      if (!staticResult.looksEmpty) {
+        cacheSet(key, staticResult.page);
+        return staticResult.page;
+      }
+    } catch (err) {
+      if (!(err instanceof FetchError)) throw err;
+      if (!["refused", "bad_status", "timeout", "unreachable"].includes(err.code)) throw err;
+      staticError = err;
+    }
+  }
+
+  if (renderLimited(ip)) {
+    if (staticResult) return staticResult.page;
+    throw new FetchError("rate", "The cat needs a breather. Full page loads are limited to 10 a minute, so wait a moment and try again.", 429);
+  }
+
+  try {
+    const { html, finalUrl } = await renderer.render(target);
+    const page = transform(html, finalUrl, "rendered").page;
+    cacheSet(key, page);
+    return page;
+  } catch (err) {
+    if (err instanceof RenderUnavailable) console.warn("Full-browser rendering unavailable:", err.message);
+    else if (!(err instanceof FetchError)) console.error("Render failed for", target.href, err);
+    if (staticResult) return staticResult.page;
+    if (staticError) throw staticError;
+    if (err instanceof FetchError) throw err;
+    throw new FetchError("unreachable", "That website couldn't be loaded.", 502);
+  }
+}
 
 /* ------------------------------------------------------------------ */
 /* Routes                                                              */
@@ -331,12 +388,7 @@ app.get("/play", async (req, res) => {
   }
 
   try {
-    let page = cacheGet(target.href);
-    if (!page) {
-      const { html, finalUrl } = await fetchPage(target);
-      page = transform(html, finalUrl);
-      cacheSet(target.href, page);
-    }
+    const page = await buildPage(target, req.query.render === "1", req.ip);
     const nonce = crypto.randomBytes(16).toString("base64");
     res.set({
       "Content-Type": "text/html; charset=utf-8",
