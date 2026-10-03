@@ -1,3 +1,5 @@
+<img width="1502" height="727" alt="image" src="https://github.com/user-attachments/assets/561ad270-75f0-46c4-bb19-8f31d9fa05b3" />
+
 # 🐈 Cat Chaos
 
 **Knock any website off the table.**
