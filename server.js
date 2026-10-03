@@ -365,7 +365,7 @@ app.set("trust proxy", true);
 app.disable("x-powered-by");
 
 app.get("/healthz", (_req, res) => res.type("text").send("ok"));
-app.get("/version", (_req, res) => res.json({ version: "4.0.0", landing: "black-orange", fullBrowserRender: true }));
+app.get("/version", (_req, res) => res.json({ version: "4.1.0", landing: "black-orange", fullBrowserRender: true }));
 app.get("/demo", (_req, res) => res.sendFile(path.join(PUBLIC, "demo.html")));
 // Always revalidate, so a new deploy shows up on the next refresh instead of an hour later.
 app.use(express.static(PUBLIC, {

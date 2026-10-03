@@ -1,68 +1,106 @@
-# Orange Cat Chaos
+# 🐈 Cat Chaos
 
-Type any website address and an orange cat walks onto the page and knocks everything off it.
+**Knock any website off the table.**
+
+Type any website address and an orange cat walks onto the page, climbs the text and images, and knocks every single thing off. The real site stays untouched.
+
+### 👉 [Play it now: catchaos-production.up.railway.app](https://catchaos-production.up.railway.app/#moves)
+
+Made by [@delymakesthings](https://x.com/delymakesthings). If the cat made you laugh, a ⭐ on this repo helps a lot.
+
+---
+
+## Try it
+
+1. Open **[catchaos-production.up.railway.app](https://catchaos-production.up.railway.app/#moves)**.
+2. Type any address, for example `en.wikipedia.org/wiki/Cat`, and hit **Let the cat in**.
+3. Wreck the page with the keyboard.
+
+No time to type? Try the [porcelain shop demo](https://catchaos-production.up.railway.app/demo), or just move your mouse around the landing page. The cat chases your cursor.
+
+## Nine ways to ruin a page
+
+| Key | Move | What it does |
+| --- | --- | --- |
+| `←` `→` | Walk | Stroll across headlines, images and buttons like they're shelves |
+| `↑` / `Space` | Jump | Press twice to double jump. Hold `↓` and jump to drop through a ledge |
+| `J` | Swat | Smack whatever is in front. Hold `↓` to swat what's underneath |
+| `K` (hold) | Scratch | Claw marks pile up until the thing breaks |
+| `L` | Hairball | Cough one up and fire it across the page |
+| `Shift` (hold) | Zoomies | Full 3 a.m. speed |
+| `P` | Laser pointer | The cat hunts your mouse and wrecks everything near it |
+| `M` | Meow | Says something. Usually a demand |
+| `R` | Restore | Put the page back together so the cat can do it again |
+
+Press `Esc` to send the cat home. On a phone, buttons appear on screen instead.
+
+## Bookmarklet
+
+Some sites refuse to open through the server. For those, use the bookmarklet: open the [landing page](https://catchaos-production.up.railway.app/#bookmarklet), drag the orange **Cat Chaos** button to your bookmarks bar, then click it on any website. It runs right on the page you're looking at, even pages you're logged into.
+
+---
 
 ## How it works
 
-- `GET /` is the landing page with the address field and the bookmarklet.
-- `GET /play?url=...` fetches the page on the server, removes the site's own scripts, points relative links and images back at the original site with a `<base>` tag, and injects the cat.
-- If the plain page turns out to be an empty app shell (sites built with React, Vue, Next and similar) or the plain request is refused, the server opens it in headless Chromium, waits for it to finish rendering, and gives the cat that finished page instead. Add `&render=1` to force this.
-- `GET /demo` is a built-in fragile porcelain shop to wreck.
-- `GET /healthz` returns `ok` for Railway's health check.
+- `GET /` is the landing page. A live cat plays in the hero and knocks the headline apart.
+- `GET /play?url=...` fetches the page on the server, removes the site's own scripts, points links and images back at the original site with a `<base>` tag, and injects the cat.
+- If the plain page is an empty app shell (React, Vue, Next and similar) or the request is refused, the server opens it in headless Chromium, waits for it to render, and gives the cat the finished page. Add `&render=1` to force this.
+- `GET /demo` is a built-in fragile porcelain shop.
+- `GET /healthz` returns `ok`. `GET /version` shows which version is deployed.
 
-## Run locally
+## Run it yourself
 
 ```bash
+git clone https://github.com/imaaiagent/catchaos.git
+cd catchaos
 npm install
+npx playwright install chromium   # optional, for sites built with JavaScript
 npm start
 # open http://localhost:3000
 ```
 
-Requires Node 20 or newer. For the full-browser fallback locally, also run `npx playwright install chromium` once. Without it, the server still works and serves plain pages.
+Requires Node 20 or newer. Without Chromium, the server still works and serves plain pages.
 
-## Deploy to Railway
+### Deploy to Railway
 
-1. Push this folder to a GitHub repository.
-2. In Railway, create a new project and choose **Deploy from GitHub repo**.
-3. Pick the repository. Railway sees the `Dockerfile` (via `railway.json`) and builds from the official Playwright image, which already includes Chromium.
-4. Open **Settings > Networking** and click **Generate Domain** to get a public URL.
+1. Fork this repo.
+2. In Railway, create a project and choose **Deploy from GitHub repo**.
+3. Railway builds from the `Dockerfile` (official Playwright image, Chromium included).
+4. Open **Settings > Networking** and click **Generate Domain**.
 
-No environment variables are needed. Railway sets `PORT` automatically.
+No environment variables are needed. Optional: `MAX_RENDERS` sets how many full-browser renders run at once (default 2). Each one uses about 300 to 500 MB of memory while it runs.
 
-Optional: `MAX_RENDERS` sets how many full-browser renders run at once (default 2). Each one uses roughly 300 to 500 MB of memory while it runs, so raise it only if your Railway plan has the memory for it.
-
-You can also deploy from your terminal with the Railway CLI: `railway init`, then `railway up`.
-
-## Safety built in
+## Safety
 
 The server fetches pages on behalf of visitors, so it is locked down:
 
 - Only `http` and `https` on ports 80 and 443.
-- Every DNS answer is checked at connect time, and each redirect is checked again, so nobody can make the server reach `localhost`, private networks, or cloud metadata addresses.
-- Pages over 6 MB, slow responses (12 s), and more than 5 redirects are refused.
-- Each IP can open 30 pages per minute, and at most 10 of those can use the full browser.
-- The headless browser sends all of its traffic through a small proxy inside the server that resolves every hostname itself and refuses private addresses, so a rendered page, its redirects and its websockets can't reach internal services either.
-- Served pages carry a Content-Security-Policy that only allows the cat's own scripts to run, and forms on proxied pages can't submit anywhere.
+- Every DNS answer is checked at connect time, and every redirect is checked again, so nobody can make the server reach `localhost`, private networks or cloud metadata addresses.
+- The headless browser sends all traffic through a small proxy inside the server that applies the same checks, so rendered pages, their redirects and their websockets can't reach internal services either.
+- Pages over 6 MB, slow responses and long redirect chains are refused.
+- Each IP can open 30 pages a minute, and at most 10 of those can use the full browser.
+- Served pages carry a Content-Security-Policy that only lets the cat's own scripts run, and forms can't submit anywhere.
 
 ## Limits
 
-- Pages are a still snapshot. Anything the site does live (charts updating, chat widgets, logins) stops where it was when the snapshot was taken.
-- Full-browser loads take a few seconds longer than plain ones.
-- Some sites block server requests (Cloudflare challenges, 403 responses). The bookmarklet on the landing page works on those, since it runs on the real page in your browser.
-- Web fonts from other sites may fall back to system fonts when the original site doesn't allow cross-origin font loading.
-- The cache and rate limiter live in memory, which is fine for a single Railway instance.
+- Pages are a still snapshot. Live parts of a site (charts, chat widgets, logins) stop where they were.
+- Sites behind strict bot protection may refuse to load. Use the bookmarklet on those.
+- Web fonts from other sites sometimes fall back to system fonts.
 
 ## Files
 
 ```
 server.js            Express server, fetching, sanitizing, safety checks
 render.js            Headless Chromium fallback and its safety proxy
-Dockerfile           Build for Railway (Playwright image with Chromium)
+Dockerfile           Railway build (Playwright image with Chromium)
+railway.json         Tells Railway to use the Dockerfile, plus the health check
 public/index.html    Landing page
 public/cat-chaos.js  The game engine (also used as the bookmarklet)
 public/boot.js       Starts the cat and keeps links inside Cat Chaos
 public/demo.html     Demo porcelain shop
-public/error.html    Friendly error page
-public/shared.css    Shared styles
-railway.json         Tells Railway to build from the Dockerfile, plus the health check
+public/error.html    Error page
 ```
+
+---
+
+Made by [@delymakesthings](https://x.com/delymakesthings). No real websites, porcelain or cats were harmed.
