@@ -9,6 +9,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRenderer, RenderUnavailable } from "./render.js";
+import { parseScore, cardHtml, sharePageHtml, shareQuery } from "./card.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC = path.join(__dirname, "public");
@@ -26,6 +27,7 @@ const USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
 const ENGINE = fs.readFileSync(path.join(PUBLIC, "cat-chaos.js"), "utf8");
 const BOOT = fs.readFileSync(path.join(PUBLIC, "boot.js"), "utf8");
 const ERROR_TEMPLATE = fs.readFileSync(path.join(PUBLIC, "error.html"), "utf8");
+const INDEX_TEMPLATE = fs.readFileSync(path.join(PUBLIC, "index.html"), "utf8");
 
 /* ------------------------------------------------------------------ */
 /* Network safety: only public internet addresses can be fetched.      */
@@ -309,6 +311,7 @@ function makeLimiter(max) {
   };
 }
 const rateLimited = makeLimiter(RATE_LIMIT);
+const cardLimited = makeLimiter(20);
 const renderLimited = makeLimiter(RENDER_LIMIT);
 
 const renderer = createRenderer({ isPublicIp, FetchError, maxBytes: MAX_BYTES, userAgent: USER_AGENT });
@@ -365,8 +368,47 @@ app.set("trust proxy", true);
 app.disable("x-powered-by");
 
 app.get("/healthz", (_req, res) => res.type("text").send("ok"));
-app.get("/version", (_req, res) => res.json({ version: "4.1.0", landing: "black-orange", fullBrowserRender: true }));
+app.get("/version", (_req, res) => res.json({ version: "5.0.0", landing: "black-orange", fullBrowserRender: true }));
 app.get("/demo", (_req, res) => res.sendFile(path.join(PUBLIC, "demo.html")));
+
+function originOf(req) {
+  return `${req.protocol}://${req.get("host")}`;
+}
+
+// Landing page, with an absolute preview image URL for link cards.
+app.get(["/", "/index.html"], (req, res) => {
+  res.set("Cache-Control", "no-cache");
+  res.type("html").send(INDEX_TEMPLATE.replaceAll("__ORIGIN__", originOf(req)));
+});
+
+// Share page: what people land on from a shared score, and what X reads for the card.
+app.get("/s", (req, res) => {
+  res.set("Cache-Control", "public, max-age=300");
+  res.type("html").send(sharePageHtml(parseScore(req.query), originOf(req)));
+});
+
+// 1200x630 score card image, drawn by headless Chromium and kept in memory.
+const cardCache = new Map();
+const CARD_CACHE_MAX = 300;
+app.get("/card.png", async (req, res) => {
+  const data = parseScore(req.query);
+  const host = req.get("host") || "";
+  const key = data.intro ? "intro|" + host : shareQuery(data) + "|" + host;
+  let png = cardCache.get(key);
+  if (!png) {
+    if (cardLimited(req.ip)) return res.status(429).type("text").send("Too many cards. Try again in a minute.");
+    try {
+      png = await renderer.screenshot(cardHtml(data, host), 1200, 630);
+    } catch (err) {
+      console.warn("Card render failed:", err.message);
+      return res.status(503).type("text").send("The score card couldn't be drawn right now.");
+    }
+    cardCache.set(key, png);
+    while (cardCache.size > CARD_CACHE_MAX) cardCache.delete(cardCache.keys().next().value);
+  }
+  res.set({ "Content-Type": "image/png", "Cache-Control": "public, max-age=86400" });
+  res.send(png);
+});
 // Always revalidate, so a new deploy shows up on the next refresh instead of an hour later.
 app.use(express.static(PUBLIC, {
   extensions: ["html"],

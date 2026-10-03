@@ -52,6 +52,11 @@ function catChaos(opts) {
     ".stats{display:flex;gap:12px;font-size:12px;color:#b8b2aa}" +
     ".stats b{color:#f6f1ea}" +
     ".mode{margin-top:6px;font-size:12px;color:#b8b2aa}" +
+    ".best{margin-top:4px;font-size:12px;color:#b8b2aa}" +
+    ".best b{color:#f6f1ea}" +
+    ".sharebtn{all:unset;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-sizing:border-box;margin-top:10px;background:#ff7a1a;color:#000;font:800 13px/1 " + FONT + ";padding:11px 12px;border-radius:10px}" +
+    ".sharebtn:hover{background:#ffa24d}" +
+    ".sharebtn:focus-visible{outline:2px solid #f6f1ea;outline-offset:2px}" +
     ".help{margin-top:8px;border-top:1px solid #262626;padding-top:8px;font-size:12px;font-weight:500;color:#d6d0c8;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:start}" +
     ".help kbd{font:700 11px/1.5 " + FONT + ";background:#262626;border-radius:5px;padding:0 5px;color:#f6f1ea;white-space:nowrap;justify-self:start;align-self:start}" +
     ".toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0d0d0d;color:#f6f1ea;border:2px solid #ff7a1a;border-radius:999px;padding:8px 16px;font:700 13px/1.3 " + FONT + ";opacity:0;transition:opacity .25s;pointer-events:none;max-width:90vw;text-align:center}" +
@@ -104,6 +109,13 @@ function catChaos(opts) {
   var comboLabel = h("span", null, "Combo "), comboEl = h("b", null, "x1");
   var sp2 = h("span"); sp2.appendChild(comboLabel); sp2.appendChild(comboEl); stats.appendChild(sp2);
   var modeEl = h("div", null, "Laser pointer: off (press P)"); modeEl.className = "mode"; hud.appendChild(modeEl);
+  var bestWrap = h("div"); bestWrap.className = "best";
+  var bestLabel = h("span", null, "Your best "), bestEl = h("b", null, "0");
+  bestWrap.appendChild(bestLabel); bestWrap.appendChild(bestEl); hud.appendChild(bestWrap);
+  var shareBtn = h("button", null, "Share my score on \uD835\uDD4F"); shareBtn.className = "sharebtn";
+  shareBtn.title = "Post your score on X";
+  shareBtn.addEventListener("click", function (e) { e.stopPropagation(); shareScore(); shareBtn.blur(); });
+  hud.appendChild(shareBtn);
 
   var help = h("div"); help.className = "help"; hud.appendChild(help);
   [["\u2190 \u2192", "Walk (or A / D)"], ["\u2191 / Space", "Jump, twice for a double jump"], ["\u2193 + Jump", "Drop down through a ledge"],
@@ -416,6 +428,40 @@ function catChaos(opts) {
   var scanTimer = 0;
   function scheduleScan() { clearTimeout(scanTimer); scanTimer = setTimeout(scan, 500); }
 
+  /* ---------- score sharing ---------- */
+  var APP = String(opts.home || (W.__CAT_CHAOS_CFG && W.__CAT_CHAOS_CFG.home) || "https://catchaos-production.up.railway.app").replace(/\/+$/, "");
+  var BEST_KEY = "catchaos-best", best = 0, lastRank = 0;
+  try { best = +W.localStorage.getItem(BEST_KEY) || 0; } catch (e) {}
+  function rankIndex() { var r = 0; for (var i = 0; i < RANKS.length; i++) if (knocked >= RANKS[i][0]) r = i; return r; }
+  function siteName() {
+    var cfg = W.__CAT_CHAOS_CFG || {};
+    if (cfg.demo) return "demo";
+    try { if (cfg.original) return new URL(cfg.original).hostname.replace(/^www\./, ""); } catch (e) {}
+    return (location.hostname || "").replace(/^www\./, "");
+  }
+  function shareScore() {
+    var site = siteName();
+    var label = site === "demo" ? "a very fragile porcelain shop" : (site || "a website");
+    var q = "score=" + score + "&knocked=" + knocked + "&combo=" + bestCombo + "&rank=" + rankIndex() + "&site=" + encodeURIComponent(site);
+    var text = knocked
+      ? "My cat knocked " + knocked.toLocaleString("en-US") + (knocked === 1 ? " thing" : " things") + " off " + label + " \uD83D\uDC08\n\n" +
+        "Score: " + score.toLocaleString("en-US") + "\nRank: " + RANKS[rankIndex()][1] + "\n\nCan your cat do worse?"
+      : "I let an orange cat loose on " + label + " and it hasn't knocked anything off yet. Suspicious. \uD83D\uDC08";
+    var url = "https://x.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(APP + "/s?" + q);
+    var win = null;
+    try { win = W.open(url, "_blank", "noopener,noreferrer"); } catch (e) {}
+    if (!win) { try { W.top.location.href = url; } catch (e) { location.href = url; } }
+  }
+  function updateBest() {
+    if (score > best) {
+      best = score;
+      try { W.localStorage.setItem(BEST_KEY, String(best)); } catch (e) {}
+    }
+    bestEl.textContent = best.toLocaleString("en-US");
+    var r = rankIndex();
+    if (r > lastRank) { lastRank = r; say("New rank: " + RANKS[r][1] + ". Share it with the orange button."); }
+  }
+
   /* ---------- restore / quit ---------- */
   var calm = W.matchMedia && W.matchMedia("(prefers-reduced-motion: reduce)").matches;
   function restore(quiet) {
@@ -681,6 +727,7 @@ function catChaos(opts) {
       scoreEl.textContent = score.toLocaleString("en-US");
       knockedEl.textContent = knocked; comboEl.textContent = "x" + combo;
       rankEl.textContent = rank();
+      if (hudOn) updateBest();
     }
 
     if (opts.autoRestore && knocked - lastRestoreKnocked >= opts.autoRestore && t - lastKnock > 1400 && !flyers.length) {

@@ -8,6 +8,16 @@
 <meta property="og:title" content="Cat Chaos">
 <meta property="og:description" content="Type any website address. An orange cat knocks everything off it.">
 <meta name="theme-color" content="#000000">
+<meta property="og:type" content="website">
+<meta property="og:url" content="__ORIGIN__/">
+<meta property="og:image" content="__ORIGIN__/card.png?intro=1">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Cat Chaos">
+<meta name="twitter:description" content="Type any website address. An orange cat knocks everything off it.">
+<meta name="twitter:image" content="__ORIGIN__/card.png?intro=1">
+<meta name="twitter:creator" content="@delymakesthings">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐈</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -270,7 +280,7 @@ footer .brand{font-size:16px;margin:0;color:var(--text)}
   </div>
 </footer>
 
-<script src="/cat-chaos.js?v=4"></script>
+<script src="/cat-chaos.js?v=5"></script>
 <script>
 (function () {
   /* Split headline lines into letters the cat can knock off. */
@@ -293,7 +303,7 @@ footer .brand{font-size:16px;margin:0;color:var(--text)}
   });
 
   /* Bookmarklet. */
-  var href = "javascript:" + encodeURIComponent("(" + catChaos.toString() + ")();void 0");
+  var href = "javascript:" + encodeURIComponent("(" + catChaos.toString() + ")(" + JSON.stringify({ home: location.origin }) + ");void 0");
   var bm = document.getElementById("bm");
   bm.setAttribute("href", href);
   bm.addEventListener("click", function (e) { e.preventDefault(); startFull(); });
@@ -325,7 +335,7 @@ footer .brand{font-size:16px;margin:0;color:var(--text)}
   }
   function startFull() {
     stop();
-    catChaos();
+    catChaos({ home: location.origin });
     mode = "full";
   }
   document.getElementById("loose").addEventListener("click", function () { this.blur(); startFull(); });

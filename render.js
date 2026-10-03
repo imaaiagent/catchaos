@@ -229,5 +229,28 @@ export function createRenderer({ isPublicIp, FetchError, maxBytes, userAgent }) 
     });
   }
 
-  return { render };
+  /* ---------------- score card screenshots ---------------- */
+
+  async function screenshot(html, width, height) {
+    return withSlot(async () => {
+      const browser = await getBrowser();
+      const context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 1 });
+      // Only Google Fonts may load; the card itself is inline.
+      await context.route("**/*", (route) => {
+        const u = route.request().url();
+        if (/^https:\/\/fonts\.(googleapis|gstatic)\.com\//.test(u)) return route.continue();
+        return route.abort();
+      });
+      try {
+        const page = await context.newPage();
+        await page.setContent(html, { waitUntil: "networkidle", timeout: 8000 }).catch(() => {});
+        await page.evaluate(() => document.fonts && document.fonts.ready).catch(() => {});
+        return await page.screenshot({ type: "png" });
+      } finally {
+        await context.close().catch(() => {});
+      }
+    });
+  }
+
+  return { render, screenshot };
 }

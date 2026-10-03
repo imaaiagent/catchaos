@@ -53,7 +53,7 @@
     if (started) return;
     started = true;
     bar();
-    if (typeof catChaos === "function") catChaos();
+    if (typeof catChaos === "function") catChaos({ home: location.origin });
   }
   if (document.readyState === "complete") start();
   else { window.addEventListener("load", start); setTimeout(start, 2500); }

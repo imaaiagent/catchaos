@@ -34,6 +34,10 @@ No time to type? Try the [porcelain shop demo](https://catchaos-production.up.ra
 
 Press `Esc` to send the cat home. On a phone, buttons appear on screen instead.
 
+## Share your score
+
+The score panel keeps your best score and has a **Share my score on 𝕏** button. It posts how many things your cat knocked off, which site, your score and your rank. The link shows up on X as a big score card with the cat mid-swat.
+
 ## Bookmarklet
 
 Some sites refuse to open through the server. For those, use the bookmarklet: open the [landing page](https://catchaos-production.up.railway.app/#bookmarklet), drag the orange **Cat Chaos** button to your bookmarks bar, then click it on any website. It runs right on the page you're looking at, even pages you're logged into.
@@ -46,6 +50,8 @@ Some sites refuse to open through the server. For those, use the bookmarklet: op
 - `GET /play?url=...` fetches the page on the server, removes the site's own scripts, points links and images back at the original site with a `<base>` tag, and injects the cat.
 - If the plain page is an empty app shell (React, Vue, Next and similar) or the request is refused, the server opens it in headless Chromium, waits for it to render, and gives the cat the finished page. Add `&render=1` to force this.
 - `GET /demo` is a built-in fragile porcelain shop.
+- `GET /s?score=...` is the page a shared score links to, with the preview tags X reads.
+- `GET /card.png?score=...` draws the 1200x630 score card with headless Chromium and keeps it in memory.
 - `GET /healthz` returns `ok`. `GET /version` shows which version is deployed.
 
 ## Run it yourself
@@ -91,6 +97,7 @@ The server fetches pages on behalf of visitors, so it is locked down:
 
 ```
 server.js            Express server, fetching, sanitizing, safety checks
+card.js              Score card image and share page
 render.js            Headless Chromium fallback and its safety proxy
 Dockerfile           Railway build (Playwright image with Chromium)
 railway.json         Tells Railway to use the Dockerfile, plus the health check
